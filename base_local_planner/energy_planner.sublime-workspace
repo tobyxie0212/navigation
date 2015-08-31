@@ -1,0 +1,891 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"els",
+				"elseif	elseif"
+			],
+			[
+				"con",
+				"con_rule"
+			],
+			[
+				"gr",
+				"grad"
+			],
+			[
+				"las",
+				"lastacc"
+			],
+			[
+				"a",
+				"accelerations"
+			],
+			[
+				"bu",
+				"bufferAcceleration"
+			],
+			[
+				"buffe",
+				"bufferAcceleration"
+			],
+			[
+				"cur",
+				"currents"
+			],
+			[
+				"velo",
+				"velocitys"
+			],
+			[
+				"curr",
+				"currents"
+			],
+			[
+				"tim",
+				"timerec"
+			],
+			[
+				"mot",
+				"motor_4"
+			],
+			[
+				"mo",
+				"motor_3"
+			],
+			[
+				"last",
+				"lastval"
+			],
+			[
+				"ma",
+				"maxWaiting"
+			],
+			[
+				"len",
+				"length"
+			],
+			[
+				"buf",
+				"bufferCurrents"
+			],
+			[
+				"buff",
+				"buffer"
+			],
+			[
+				"l",
+				"linearize"
+			],
+			[
+				"poin",
+				"point"
+			],
+			[
+				"po",
+				"pose"
+			],
+			[
+				"RO",
+				"ROS_INFO"
+			],
+			[
+				"q",
+				"q_new"
+			],
+			[
+				"v",
+				"v"
+			],
+			[
+				"m",
+				"min_radius"
+			],
+			[
+				"Po",
+				"Point_2"
+			],
+			[
+				"ge",
+				"geometry_msgs"
+			],
+			[
+				"s",
+				"s"
+			],
+			[
+				"ROS",
+				"ROS_INFO"
+			],
+			[
+				"nav",
+				"nav_msgs"
+			],
+			[
+				"push",
+				"push_back"
+			],
+			[
+				"_",
+				"_msg"
+			],
+			[
+				"path",
+				"path_optimizer"
+			],
+			[
+				"p",
+				"publisher"
+			],
+			[
+				"cle",
+				"clearPath"
+			],
+			[
+				"add",
+				"addPose"
+			],
+			[
+				"pa",
+				"path"
+			],
+			[
+				"st",
+				"std"
+			],
+			[
+				"ro",
+				"ROS_INFO"
+			],
+			[
+				"Pa",
+				"PathOptimizer"
+			],
+			[
+				"num",
+				"num_users"
+			],
+			[
+				"X",
+				"X_grad"
+			],
+			[
+				"met",
+				"metricListener"
+			],
+			[
+				"STR",
+				"STRL_DESC"
+			],
+			[
+				"y",
+				"y"
+			],
+			[
+				"NO_",
+				"NO_GOALS"
+			],
+			[
+				"N",
+				"NO_TRIPS_P_CONFIG"
+			],
+			[
+				"init",
+				"initp"
+			],
+			[
+				"coo",
+				"coords"
+			],
+			[
+				"cor",
+				"coordsarr"
+			],
+			[
+				"BS",
+				"BSONArrayBuilder"
+			],
+			[
+				"che",
+				"checkCreation"
+			],
+			[
+				"me",
+				"metricListener"
+			],
+			[
+				"BSON",
+				"BSONArray"
+			],
+			[
+				"sta",
+				"startTime"
+			],
+			[
+				"E",
+				"exception"
+			],
+			[
+				"d",
+				"d"
+			],
+			[
+				"STRL",
+				"STRL_NAME"
+			],
+			[
+				"NO",
+				"NO_MET_F"
+			],
+			[
+				"sa",
+				"saveToDB"
+			],
+			[
+				"to",
+				"toString"
+			],
+			[
+				"metr",
+				"metricarr"
+			],
+			[
+				"IN",
+				"ROS_INFO"
+			],
+			[
+				"de",
+				"debug"
+			],
+			[
+				"set",
+				"setSValue"
+			],
+			[
+				"val",
+				"_val"
+			],
+			[
+				"MON",
+				"MONGO_DB"
+			],
+			[
+				"iu",
+				"iu"
+			],
+			[
+				"Z",
+				"Z"
+			],
+			[
+				"iC",
+				"iC"
+			],
+			[
+				"end",
+				"endfor"
+			],
+			[
+				"map",
+				"map_frame"
+			],
+			[
+				"word",
+				"word_indices"
+			],
+			[
+				"vo",
+				"vocabList"
+			],
+			[
+				"predi",
+				"predict"
+			],
+			[
+				"bes",
+				"bestS"
+			],
+			[
+				"si",
+				"sigma"
+			],
+			[
+				"pas",
+				"passedTime"
+			],
+			[
+				"cu",
+				"current1"
+			],
+			[
+				"def",
+				"define"
+			],
+			[
+				"T",
+				"the"
+			],
+			[
+				"time",
+				"timeLast"
+			],
+			[
+				"strin",
+				"stringInfo"
+			],
+			[
+				"Tra",
+				"transform"
+			],
+			[
+				"get",
+				"getOrigin"
+			],
+			[
+				"oldP",
+				"oldPose"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "include/base_local_planner/energy_planner.h",
+			"settings":
+			{
+				"buffer_size": 20685,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/energy_planner.cpp",
+			"settings":
+			{
+				"buffer_size": 36510,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "include/base_local_planner/energy_planner_ros.h",
+			"settings":
+			{
+				"buffer_size": 9852,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/energy_planner_ros.cpp",
+			"settings":
+			{
+				"buffer_size": 25705,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/ROS.sublime-build",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+		],
+		"width": 404.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/ch/ros/sim_ws/src/navigation/base_local_planner/CMakeLists.txt",
+		"/home/ch/ros/sim_ws/src/navigation/base_local_planner/src/trajectory_planner_ros.cpp",
+		"/home/ch/ros/sim_ws/src/navigation/base_local_planner/include/base_local_planner/trajectory_planner_ros.h",
+		"/home/ch/ros/sim_ws/src/navigation/base_local_planner/src/trajectory_planner.cpp",
+		"/home/ch/ros/sim_ws/src/navigation/base_local_planner/include/base_local_planner/trajectory_planner.h",
+		"/home/ch/ros/sim_ws/src/navigation/base_local_planner/include/base_local_planner/trajectory_inc.h",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/param/base_local_planner_params.yaml",
+		"/home/ch/ros/sim_ws/src/navigation/base_local_planner/src/trajectory.cpp",
+		"/home/ch/ros/sim_ws/src/navigation/base_local_planner/include/base_local_planner/trajectory.h",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/launch/planner_setup_selector.sh",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/main.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/applyControlRule.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/plotData.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/gradientDescentMulti.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/modelFitting.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/loadData.m",
+		"/home/ch/MasterThesis/4_doc/plan/wasmanmachensollte.txt",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_analysis/src/model_fitting.py",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/computeCostMulti.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/printData.m",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/launch/phidgets.launch",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/param/phidgets.yaml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_analysis/src/current_msmt.cpp",
+		"/home/ch/ros/sim_ws/src/navigation/dwa_local_planner/src/dwa_planner_ros.cpp",
+		"/home/ch/ros/sim_ws/src/navigation/dwa_local_planner/src/dwa_planner.cpp",
+		"/home/ch/wasmanmachensollte.txt",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/note_on_normalization.txt",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/deNormalize.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/featureNormalize.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/normalize.m",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_teleop/CMakeLists.txt",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/matlab_modelfitting/computeCostMulti.m",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/matlab_modelfitting/gradientDescentMulti.m",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/matlab_modelfitting/loadData.m",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/matlab_modelfitting/main.m",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/matlab_modelfitting/printData.m",
+		"/media/Files/text/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/exercises/mlclass-ex1/computeCostMulti.m",
+		"/media/Files/text/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/exercises/mlclass-ex1/gradientDescentMulti.m",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/matlab_modelfitting/costFunctionM.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/costFunction.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/github/ex2/ex2/costFunctionReg.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/exercises/mlclass-ex2/ex2.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/exercises/mlclass-ex1/featureNormalize.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/github/ex1/ex1/gradientDescent.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/github/ex1/ex1/gradientDescentMulti.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/exercises/mlclass-ex1/gradientDescent.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/exercises/mlclass-ex2/predict.m",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/matlab_modelfitting/costFunction.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/exercises/mlclass-ex2/costFunction.m",
+		"/home/ch/MasterThesis/3_dev/matlab_modelfitting/gradientDescent_old.m",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/matlab_modelfitting/modelFitting.m",
+		"/home/ch/!!Studium/4. Semester(MSc) (WS14)/Machine Learning (coursera)/exercises/mlclass-ex1/ex1.m",
+		"/home/ch/.config/sublime-text-2/Packages/User/Default (Linux).sublime-keymap",
+		"/home/ch/.config/sublime-text-2/Packages/Default/Default (Linux).sublime-keymap",
+		"/home/ch/!!Studium/3. Semester(MSc) (SS14)/forschungsarbeit ipa/docs/9_ARBEIT/Ausarbeitung_vMarcel/Masterarbeit_MarcelWeber_Ausarbeitung.tex",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/src/path_optimizer.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/launch/amcl_move_base_mudcircleII.launch",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_gazebo/msg/MotorCurrents.msg",
+		"/opt/ros/hydro/include/tf2/LinearMath/Quaternion.h",
+		"/opt/ros/hydro/share/geometry_msgs/msg/Pose.msg",
+		"/opt/ros/hydro/share/geometry_msgs/msg/Quaternion.msg",
+		"/opt/ros/hydro/include/geometry_msgs/Quaternion.h",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/CMakeLists.txt",
+		"/tmp/circles.cpp",
+		"/home/ch/ros/sim_ws/src/navigation/global_planner/include/global_planner/planner_core.h",
+		"/home/ch/ros/sim_ws/src/navigation/global_planner/src/planner_core.cpp",
+		"/opt/ros/hydro/share/nav_msgs/msg/Path.msg",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/launch/move_base.xml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/param/move_base_params.yaml",
+		"/home/ch/ros/sim_ws/src/navigation/.gitignore",
+		"/home/ch/.bashrc",
+		"/home/ch/ros/sim_ws/src/navigation/global_planner/src/plan_node.cpp",
+		"/home/ch/ros/sim_ws/src/navigation/global_planner/src/gradient_path.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_teleop/src/keyboard_teleop.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_analysis/src/nav_analysis.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/package.xml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_gazebo/src/current_pub.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_analysis/CMakeLists.txt",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_analysis/src/automatron.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_gazebo/package.xml",
+		"/home/ch/ros/sim_ws/src/navigation/move_base_msgs/CMakeLists.txt",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_gazebo/CMakeLists.txt",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/navigation/global_planner/CMakeLists.txt",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/navigation/global_planner/include/global_planner/gradient_path.h",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/navigation/global_planner/src/plan_node.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/navigation/global_planner/include/global_planner/planner_core.h",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/navigation/global_planner/src/planner_core.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_teleop/lauch/keyboard_teleop_x1000.launch",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/navigation/global_planner/src/dijkstra.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/navigation/global_planner/src/gradient_path.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/navigation/global_planner/src/grid_path.cpp",
+		"/home/ch/.sublimeText2/Pristine Packages/Color Scheme - Default.sublime-package",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/opti_planner/src/opti_planner.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/opti_planner/src/planner_core.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_teleop/package.xml",
+		"/media/Files/text/!!Studium/Machine Learning (coursera)/exercises/mlclass-ex4/randInitializeWeights.m",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/param/local_costmap_params.yaml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/param/global_costmap_params.yaml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/param/costmap_common_params.yaml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_navigation/param/rviz.rviz",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/opti_planner/src/carrot_planner.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/opti_planner/bgp_plugin.xml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/opti_planner/include/carrot_planner/carrot_planner.h",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/opti_planner/package.xml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/opti_planner/CMakeLists.txt",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_global_planner/CMakeLists.txt",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_global_planner/src/carrot_planner.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_global_planner/package.xml",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_global_planner/include/carrot_planner/carrot_planner.h",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_global_planner/bgp_plugin.xml",
+		"/media/Files/text/!!Studium/Machine Learning (coursera)/exercises/mlclass-ex8/ex8_cofi.m",
+		"/media/Files/text/!!Studium/Machine Learning (coursera)/exercises/mlclass-ex8/cofiCostFunc.m",
+		"/media/Files/text/!!Studium/Machine Learning (coursera)/exercises/mlclass-ex8/selectThreshold.m",
+		"/media/Files/text/!!Studium/Machine Learning (coursera)/exercises/mlclass-ex8/estimateGaussian.m",
+		"/media/Files/text/!!Studium/Machine Learning (coursera)/exercises/mlclass-ex8/ex8.m",
+		"/home/ch/g1.sh",
+		"/media/Files/text/!!Studium/Master Thesis/3_dev/mongodb_cpp/tutorial.cpp",
+		"/home/ch/g0.sh",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_analysis/launch/nav_analysis.launch",
+		"/home/ch/plans.txt",
+		"/media/Files/text/!!Studium/Machine Learning (coursera)/exercises/mlclass-ex7/recoverData.m",
+		"/home/ch/ros/sim_ws/src/auckbot/auckbot_twincat/src/TwinCatPlcGetOdom.cpp",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_analysis/FindMongoClient.cmake",
+		"/tmp/mongotest/tutorial.cpp",
+		"/home/ch/MasterThesis/3_dev/mongodb_cpp/exprop.txt",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_analysis/package.xml",
+		"/home/ch/ros/sim_ws/src/cmake/FindMongoClient.cmake",
+		"/home/ch/ros/sim_ws/src/auckbot_sim/auckbot_teleop/lauch/keyboard_teleop.launch"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"traje",
+			"trajec",
+			"TrajectoryP",
+			"Trajectory",
+			"ypos",
+			"cos",
+			"xax",
+			"X",
+			"0; %",
+			"0; %X",
+			"0; %",
+			"X",
+			"0; %X",
+			"0; %",
+			";\n",
+			"X",
+			"X_norm",
+			"Norm",
+			"X_norm",
+			"X(",
+			"X",
+			"ylabel",
+			"1",
+			"ylabeltit",
+			"ylabel",
+			"xlabel",
+			"ylabel",
+			"mu",
+			"/",
+			"timeSince",
+			"DEB",
+			"save",
+			"duration",
+			"self.bufferAcceleration",
+			"acceleration",
+			"bufferAcceleration",
+			"lasttim",
+			"\\[.....\\]",
+			"\\[...\\]",
+			"\\[..\\]",
+			"linearize",
+			"ser",
+			"serial",
+			"times",
+			"plot",
+			"self.messagesRecieved",
+			"plt.",
+			"debu",
+			"toSe",
+			"keys",
+			"max",
+			"waitin",
+			"yaw",
+			"to",
+			"get",
+			"point",
+			"path_dist",
+			"heading_scoring",
+			"traj.",
+			"generateTrajectory",
+			"vx_samples",
+			"generateTrajectory",
+			"INFO",
+			"ROS_INFO",
+			"radiusCh",
+			"CURVE",
+			"CURV",
+			"5",
+			"r",
+			"poseStamp",
+			"pose",
+			"cb",
+			"ncur",
+			"GOT",
+			"plan.cle",
+			"OccC",
+			"OccCost",
+			"publi",
+			"GOT",
+			"\"plan",
+			"private",
+			"n.",
+			"pub_",
+			"betterplan",
+			"plan_pub_",
+			"publi",
+			"better",
+			"pub",
+			"INFO",
+			"Pot",
+			"end",
+			"getPath",
+			"getPlanFromPotential",
+			"plan_pub",
+			"plan",
+			"setPlan",
+			"plan",
+			"publi",
+			"param",
+			"phidgets",
+			"CurrentPub",
+			"INFO",
+			"push_cur",
+			"planner_",
+			"calculatePotentials",
+			"potent",
+			"getIndex",
+			"path_maker_",
+			"getPath",
+			"getPlanFromPotential",
+			"worldToMap",
+			"makePlan",
+			"publishPotential",
+			"grid",
+			"potential_pub_",
+			"publishPo",
+			"dScale",
+			"carrot",
+			"Carrot",
+			"carrot",
+			"nh",
+			"start",
+			"NO_TRIPS_P_CONFIG",
+			"resultca",
+			"initPoseSet",
+			"goal",
+			"initi",
+			"addpo"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"EnergyP",
+			"if(DEBUG) ROS_INFO",
+			"path",
+			"PathOptimizer",
+			"opti",
+			"Opti",
+			"opti",
+			"DB",
+			"MongoDB_DIR"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "include/base_local_planner/energy_planner.h",
+					"settings":
+					{
+						"buffer_size": 20685,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9788,
+								9788
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2269.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/energy_planner.cpp",
+					"settings":
+					{
+						"buffer_size": 36510,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4369.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "include/base_local_planner/energy_planner_ros.h",
+					"settings":
+					{
+						"buffer_size": 9852,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3921,
+								3921
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 6,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2179.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/energy_planner_ros.cpp",
+					"settings":
+					{
+						"buffer_size": 25705,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6664.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 194.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true
+}
