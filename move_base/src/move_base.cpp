@@ -426,45 +426,45 @@ namespace move_base {
       bool found_legal = false;
       float resolution = planner_costmap_ros_->getCostmap()->getResolution();
       float search_increment = resolution*3.0;
-      if(req.tolerance > 0.0 && req.tolerance < search_increment) search_increment = req.tolerance;
+      if(req.tolerance < search_increment) search_increment = req.tolerance;
       for(float max_offset = search_increment; max_offset <= req.tolerance && !found_legal; max_offset += search_increment) {
-        for(float y_offset = 0; y_offset <= max_offset && !found_legal; y_offset += search_increment) {
-          for(float x_offset = 0; x_offset <= max_offset && !found_legal; x_offset += search_increment) {
+	for(float y_offset = 0; y_offset <= max_offset && !found_legal; y_offset += search_increment) {
+	  for(float x_offset = 0; x_offset <= max_offset && !found_legal; x_offset += search_increment) {
 
-            //don't search again inside the current outer layer
-            if(x_offset < max_offset-1e-9 && y_offset < max_offset-1e-9) continue;
+	    //don't search again inside the current outer layer
+	    if(x_offset < max_offset-1e-9 && y_offset < max_offset-1e-9) continue;
 
-            //search to both sides of the desired goal
-            for(float y_mult = -1.0; y_mult <= 1.0 + 1e-9 && !found_legal; y_mult += 2.0) {
+	    //search to both sides of the desired goal
+	    for(float y_mult = -1.0; y_mult <= 1.0 + 1e-9 && !found_legal; y_mult += 2.0) {
 
-              //if one of the offsets is 0, -1*0 is still 0 (so get rid of one of the two)
-              if(y_offset < 1e-9 && y_mult < -1.0 + 1e-9) continue;
+	      //if one of the offsets is 0, -1*0 is still 0 (so get rid of one of the two)
+	      if(y_offset < 1e-9 && y_mult < -1.0 + 1e-9) continue;
 
-              for(float x_mult = -1.0; x_mult <= 1.0 + 1e-9 && !found_legal; x_mult += 2.0) {
-                if(x_offset < 1e-9 && x_mult < -1.0 + 1e-9) continue;
+	      for(float x_mult = -1.0; x_mult <= 1.0 + 1e-9 && !found_legal; x_mult += 2.0) {
+		if(x_offset < 1e-9 && x_mult < -1.0 + 1e-9) continue;
 
-                p.pose.position.y = req.goal.pose.position.y + y_offset * y_mult;
-                p.pose.position.x = req.goal.pose.position.x + x_offset * x_mult;
+		p.pose.position.y = req.goal.pose.position.y + y_offset * y_mult;
+		p.pose.position.x = req.goal.pose.position.x + x_offset * x_mult;
 
-                if(planner_->makePlan(start, p, global_plan)){
-                  if(!global_plan.empty()){
+		if(planner_->makePlan(start, p, global_plan)){
+		  if(!global_plan.empty()){
 
-                    //adding the (unreachable) original goal to the end of the global plan, in case the local planner can get you there
+		    //adding the (unreachable) original goal to the end of the global plan, in case the local planner can get you there
                     //(the reachable goal should have been added by the global planner)
-                    global_plan.push_back(req.goal);
+		    global_plan.push_back(req.goal);
 
-                    found_legal = true;
-                    ROS_DEBUG_NAMED("move_base", "Found a plan to point (%.2f, %.2f)", p.pose.position.x, p.pose.position.y);
-                    break;
-                  }
-                }
-                else{
-                  ROS_DEBUG_NAMED("move_base","Failed to find a plan to point (%.2f, %.2f)", p.pose.position.x, p.pose.position.y);
-                }
-              }
-            }
-          }
-        }
+		    found_legal = true;
+		    ROS_DEBUG_NAMED("move_base", "Found a plan to point (%.2f, %.2f)", p.pose.position.x, p.pose.position.y);
+		    break;
+		  }
+		}
+		else{
+		  ROS_DEBUG_NAMED("move_base","Failed to find a plan to point (%.2f, %.2f)", p.pose.position.x, p.pose.position.y);
+		}
+	      }
+	    }
+	  }
+	}
       }
     }
 
@@ -803,8 +803,8 @@ namespace move_base {
 
       r.sleep();
       //make sure to sleep for the remainder of our cycle time
-      if(r.cycleTime() > ros::Duration(1 / controller_frequency_) && state_ == CONTROLLING)
-        ROS_WARN("Control loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds", controller_frequency_, r.cycleTime().toSec());
+      // if(r.cycleTime() > ros::Duration(1 / controller_frequency_) && state_ == CONTROLLING)
+      //   ROS_WARN("Control loop missed its desired rate of %.4fHz... the loop actually took %.4f seconds", controller_frequency_, r.cycleTime().toSec());
     }
 
     //wake up the planner thread so that it can exit cleanly
@@ -1151,12 +1151,6 @@ namespace move_base {
   }
 
   void MoveBase::resetState(){
-    // Disable the planner thread
-    boost::unique_lock<boost::mutex> lock(planner_mutex_);
-    runPlanner_ = false;
-    lock.unlock();
-
-    // Reset statemachine
     state_ = PLANNING;
     recovery_index_ = 0;
     recovery_trigger_ = PLANNING_R;

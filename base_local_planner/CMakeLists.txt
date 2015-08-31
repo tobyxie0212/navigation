@@ -82,7 +82,8 @@ add_library(base_local_planner
 	src/latched_stop_rotate_controller.cpp
 	src/local_planner_util.cpp
 	src/odometry_helper_ros.cpp
-	src/obstacle_cost_function.cpp
+    src/obstacle_cost_function.cpp
+    src/energy_cost_function.cpp
 	src/oscillation_cost_function.cpp
 	src/prefer_forward_cost_function.cpp
 	src/point_grid.cpp
@@ -102,10 +103,17 @@ target_link_libraries(base_local_planner
     )
 
 add_library(trajectory_planner_ros
-	src/trajectory_planner.cpp
-	src/trajectory_planner_ros.cpp)
+    src/trajectory_planner.cpp
+    src/trajectory_planner_ros.cpp)
 add_dependencies(trajectory_planner_ros nav_msgs_gencpp)
 target_link_libraries(trajectory_planner_ros
+     base_local_planner)
+
+add_library(energy_planner_ros
+    src/energy_planner.cpp
+    src/energy_planner_ros.cpp)
+add_dependencies(energy_planner_ros nav_msgs_gencpp)
+target_link_libraries(energy_planner_ros
      base_local_planner)
 
 add_executable(point_grid src/point_grid.cpp)
@@ -114,7 +122,7 @@ target_link_libraries(point_grid ${catkin_LIBRARIES})
 install(TARGETS
             base_local_planner
             trajectory_planner_ros
-       ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+            energy_planner_ros
        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
        )
 

@@ -50,12 +50,15 @@ namespace base_local_planner {
   double SimpleScoredSamplingPlanner::scoreTrajectory(Trajectory& traj, double best_traj_cost) {
     double traj_cost = 0;
     int gen_id = 0;
-    for(std::vector<TrajectoryCostFunction*>::iterator score_function = critics_.begin(); score_function != critics_.end(); ++score_function) {
+    for(std::vector<TrajectoryCostFunction*>::iterator score_function = critics_.begin(); score_function != critics_.end(); ++score_function) { // for_each cost function
       TrajectoryCostFunction* score_function_p = *score_function;
+       
       if (score_function_p->getScale() == 0) {
         continue;
       }
       double cost = score_function_p->scoreTrajectory(traj);
+      //ROS_INFO(">>> Velocity %.3lf, %.3lf, %.3lf cost function  %d with cost: %f", traj.xv_, traj.yv_, traj.thetav_, gen_id, cost);
+      
       if (cost < 0) {
         ROS_DEBUG("Velocity %.3lf, %.3lf, %.3lf discarded by cost function  %d with cost: %f", traj.xv_, traj.yv_, traj.thetav_, gen_id, cost);
         traj_cost = cost;
@@ -132,12 +135,13 @@ namespace base_local_planner {
           traj.addPoint(px, py, pth);
         }
       }
-      ROS_DEBUG("Evaluated %d trajectories, found %d valid", count, count_valid);
+      // ROS_INFO(">>> Evaluated %d trajectories, found %d valid", count, count_valid);
       if (best_traj_cost >= 0) {
         // do not try fallback generators
         break;
       }
     }
+    ROS_INFO(">>> best_traj_cost %f", best_traj_cost);
     return best_traj_cost >= 0;
   }
 
