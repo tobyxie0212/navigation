@@ -34,7 +34,6 @@ target_link_libraries(carrot_planner
     )
 
 install(TARGETS carrot_planner
-       ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
        )
 

@@ -119,7 +119,14 @@ namespace base_local_planner {
       private_nh.param("xy_goal_tolerance", xy_goal_tolerance_, 0.10);
       private_nh.param("acc_lim_x", acc_lim_x_, 2.5);
       private_nh.param("acc_lim_y", acc_lim_y_, 2.5);
-      private_nh.param("acc_lim_theta", acc_lim_theta_, 3.2);
+      //this was improperly set as acc_lim_th -- TODO: remove this when we get to J turtle
+      acc_lim_theta_ = 3.2;
+      if (private_nh.hasParam("acc_lim_th"))
+      {
+        ROS_WARN("%s/acc_lim_th should be acc_lim_theta, this param will be removed in J-turtle", private_nh.getNamespace().c_str());
+        private_nh.param("acc_lim_th", acc_lim_theta_, 3.2);
+      }
+      private_nh.param("acc_lim_theta", acc_lim_theta_, acc_lim_theta_);
 
       private_nh.param("stop_time_buffer", stop_time_buffer, 0.2);
 
@@ -154,7 +161,7 @@ namespace base_local_planner {
           sim_period_ = 0.05;
         }
       }
-      ROS_INFO("Sim period is set to %.2f", sim_period_);
+      ROS_INFO("<traj p> Sim period is set to %.2f", sim_period_);
 
       private_nh.param("sim_time", sim_time, 1.0);
       private_nh.param("sim_granularity", sim_granularity, 0.025);

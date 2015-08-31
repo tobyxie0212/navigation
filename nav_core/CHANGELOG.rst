@@ -2,19 +2,6 @@
 Changelog for package nav_core
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.13.0 (2015-03-17)
--------------------
-* adding makePlan function with returned cost to base_global_planner
-* Contributors: phil0stine
-
-1.12.0 (2015-02-04)
--------------------
-* update maintainer email
-* Contributors: Michael Ferguson
-
-1.11.15 (2015-02-03)
---------------------
-
 1.11.14 (2014-12-05)
 --------------------
 

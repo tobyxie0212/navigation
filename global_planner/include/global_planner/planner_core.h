@@ -51,7 +51,6 @@
 #include <global_planner/potential_calculator.h>
 #include <global_planner/expander.h>
 #include <global_planner/traceback.h>
-#include <global_planner/orientation_filter.h>
 #include <global_planner/GlobalPlannerConfig.h>
 
 namespace global_planner {
@@ -78,11 +77,6 @@ class GlobalPlanner : public nav_core::BaseGlobalPlanner {
          * @param  frame_id Frame of the costmap
          */
         GlobalPlanner(std::string name, costmap_2d::Costmap2D* costmap, std::string frame_id);
-
-        /**
-         * @brief  Default deconstructor for the PlannerCore object
-         */
-        ~GlobalPlanner();
 
         /**
          * @brief  Initialization function for the PlannerCore object
@@ -162,6 +156,9 @@ class GlobalPlanner : public nav_core::BaseGlobalPlanner {
          */
         void publishPlan(const std::vector<geometry_msgs::PoseStamped>& path);
 
+        ~GlobalPlanner() {
+        }
+
         bool makePlanService(nav_msgs::GetPlan::Request& req, nav_msgs::GetPlan::Response& resp);
 
     protected:
@@ -188,7 +185,6 @@ class GlobalPlanner : public nav_core::BaseGlobalPlanner {
         PotentialCalculator* p_calc_;
         Expander* planner_;
         Traceback* path_maker_;
-        OrientationFilter* orientation_filter_;
 
         bool publish_potential_;
         ros::Publisher potential_pub_;

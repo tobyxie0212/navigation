@@ -50,14 +50,11 @@ namespace costmap_2d
 {
 
 InflationLayer::InflationLayer()
-  : inflation_radius_(0)
-  , weight_(0)
+  : inflation_radius_( 0 )
+  , weight_( 0 )
   , cell_inflation_radius_(0)
   , cached_cell_inflation_radius_(0)
   , dsrv_(NULL)
-  , seen_(NULL)
-  , cached_costs_(NULL)
-  , cached_distances_(NULL)
 {
   access_ = new boost::shared_mutex();
 }
@@ -68,16 +65,13 @@ void InflationLayer::onInitialize()
     boost::unique_lock < boost::shared_mutex > lock(*access_);
     ros::NodeHandle nh("~/" + name_), g_nh;
     current_ = true;
-    if (seen_)
-      delete[] seen_;
     seen_ = NULL;
-    seen_size_ = 0;
     need_reinflation_ = false;
 
     dynamic_reconfigure::Server<costmap_2d::InflationPluginConfig>::CallbackType cb = boost::bind(
         &InflationLayer::reconfigureCB, this, _1, _2);
 
-    if (dsrv_ != NULL){
+    if(dsrv_ != NULL){
       dsrv_->clearCallback();
       dsrv_->setCallback(cb);
     }
@@ -86,6 +80,7 @@ void InflationLayer::onInitialize()
       dsrv_ = new dynamic_reconfigure::Server<costmap_2d::InflationPluginConfig>(ros::NodeHandle("~/" + name_));
       dsrv_->setCallback(cb);
     }
+
   }
 
   matchSize();
@@ -118,15 +113,14 @@ void InflationLayer::matchSize()
 
   unsigned int size_x = costmap->getSizeInCellsX(), size_y = costmap->getSizeInCellsY();
   if (seen_)
-    delete[] seen_;
-  seen_size_ = size_x * size_y;
-  seen_ = new bool[seen_size_];
+    delete seen_;
+  seen_ = new bool[size_x * size_y];
 }
 
 void InflationLayer::updateBounds(double robot_x, double robot_y, double robot_yaw, double* min_x,
                                            double* min_y, double* max_x, double* max_y)
 {
-  if (need_reinflation_)
+  if( need_reinflation_ )
   {
     // For some reason when I make these -<double>::max() it does not
     // work with Costmap2D::worldToMapEnforceBounds(), so I'm using
@@ -142,13 +136,12 @@ void InflationLayer::updateBounds(double robot_x, double robot_y, double robot_y
 void InflationLayer::onFootprintChanged()
 {
   inscribed_radius_ = layered_costmap_->getInscribedRadius();
-  cell_inflation_radius_ = cellDistance(inflation_radius_);
+  cell_inflation_radius_ = cellDistance( inflation_radius_ );
   computeCaches();
   need_reinflation_ = true;
 
-  ROS_DEBUG("InflationLayer::onFootprintChanged(): num footprint points: %lu,"
-            " inscribed_radius_ = %.3f, inflation_radius_ = %.3f",
-            layered_costmap_->getFootprint().size(), inscribed_radius_, inflation_radius_);
+  ROS_DEBUG( "InflationLayer::onFootprintChanged(): num footprint points: %lu, inscribed_radius_ = %.3f, inflation_radius_ = %.3f",
+             layered_costmap_->getFootprint().size(), inscribed_radius_, inflation_radius_ );
 }
 
 void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, int min_j, int max_i,
@@ -158,24 +151,12 @@ void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, 
   if (!enabled_)
     return;
 
-  // make sure the inflation queue is empty at the beginning of the cycle (should always be true)
+  //make sure the inflation queue is empty at the beginning of the cycle (should always be true)
   ROS_ASSERT_MSG(inflation_queue_.empty(), "The inflation queue must be empty at the beginning of inflation");
 
   unsigned char* master_array = master_grid.getCharMap();
   unsigned int size_x = master_grid.getSizeInCellsX(), size_y = master_grid.getSizeInCellsY();
 
-  if (seen_ == NULL) {
-    ROS_WARN("InflationLayer::updateCosts(): seen_ array is NULL");
-    seen_size_ = size_x * size_y;
-    seen_ = new bool[seen_size_];
-  }
-  else if (seen_size_ != size_x * size_y)
-  {
-    ROS_WARN("InflationLayer::updateCosts(): seen_ array size is wrong");
-    delete[] seen_;
-    seen_size_ = size_x * size_y;
-    seen_ = new bool[seen_size_];
-  }
   memset(seen_, false, size_x * size_y * sizeof(bool));
 
   // We need to include in the inflation cells outside the bounding
@@ -187,10 +168,10 @@ void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, 
   max_i += cell_inflation_radius_;
   max_j += cell_inflation_radius_;
 
-  min_i = std::max(0, min_i);
-  min_j = std::max(0, min_j);
-  max_i = std::min(int(size_x), max_i);
-  max_j = std::min(int(size_y), max_j);
+  min_i = std::max( 0, min_i );
+  min_j = std::max( 0, min_j );
+  max_i = std::min( int( size_x  ), max_i );
+  max_j = std::min( int( size_y  ), max_j );
 
   for (int j = min_j; j < max_j; j++)
   {
@@ -207,7 +188,7 @@ void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, 
 
   while (!inflation_queue_.empty())
   {
-    // get the highest priority cell and pop it off the priority queue
+    //get the highest priority cell and pop it off the priority queue
     const CellData& current_cell = inflation_queue_.top();
 
     unsigned int index = current_cell.index_;
@@ -216,10 +197,10 @@ void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, 
     unsigned int sx = current_cell.src_x_;
     unsigned int sy = current_cell.src_y_;
 
-    // pop once we have our cell info
+    //pop once we have our cell info
     inflation_queue_.pop();
 
-    // attempt to put the neighbors of the current cell onto the queue
+    //attempt to put the neighbors of the current cell onto the queue
     if (mx > 0)
       enqueue(master_array, index - 1, mx - 1, my, sx, sy);
     if (my > 0)
@@ -243,17 +224,18 @@ void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, 
 inline void InflationLayer::enqueue(unsigned char* grid, unsigned int index, unsigned int mx, unsigned int my,
                                             unsigned int src_x, unsigned int src_y)
 {
-  // set the cost of the cell being inserted
+
+  //set the cost of the cell being inserted
   if (!seen_[index])
   {
-    // we compute our distance table one cell further than the inflation radius dictates so we can make the check below
+    //we compute our distance table one cell further than the inflation radius dictates so we can make the check below
     double distance = distanceLookup(mx, my, src_x, src_y);
 
-    // we only want to put the cell in the queue if it is within the inflation radius of the obstacle point
+    //we only want to put the cell in the queue if it is within the inflation radius of the obstacle point
     if (distance > cell_inflation_radius_)
       return;
 
-    // assign the cost associated with the distance from an obstacle to the cell
+    //assign the cost associated with the distance from an obstacle to the cell
     unsigned char cost = costLookup(mx, my, src_x, src_y);
     unsigned char old_cost = grid[index];
 
@@ -261,7 +243,7 @@ inline void InflationLayer::enqueue(unsigned char* grid, unsigned int index, uns
       grid[index] = cost;
     else
       grid[index] = std::max(old_cost, cost);
-    // push the cell data onto the queue and mark
+    //push the cell data onto the queue and mark
     seen_[index] = true;
     CellData data(distance, index, mx, my, src_x, src_y);
     inflation_queue_.push(data);
@@ -270,13 +252,14 @@ inline void InflationLayer::enqueue(unsigned char* grid, unsigned int index, uns
 
 void InflationLayer::computeCaches()
 {
-  if (cell_inflation_radius_ == 0)
+  if(cell_inflation_radius_ == 0)
     return;
 
-  // based on the inflation radius... compute distance and cost caches
-  if (cell_inflation_radius_ != cached_cell_inflation_radius_)
+  //based on the inflation radius... compute distance and cost caches
+  if(cell_inflation_radius_ != cached_cell_inflation_radius_)
   {
-    deleteKernels();
+    if(cached_cell_inflation_radius_ > 0)
+      deleteKernels();
 
     cached_costs_ = new unsigned char*[cell_inflation_radius_ + 2];
     cached_distances_ = new double*[cell_inflation_radius_ + 2];
@@ -309,23 +292,18 @@ void InflationLayer::deleteKernels()
   {
     for (unsigned int i = 0; i <= cached_cell_inflation_radius_ + 1; ++i)
     {
-      if (cached_distances_[i])
-        delete[] cached_distances_[i];
+      delete[] cached_distances_[i];
     }
-    if (cached_distances_)
-      delete[] cached_distances_;
-    cached_distances_ = NULL;
+    delete[] cached_distances_;
   }
 
   if (cached_costs_ != NULL)
   {
     for (unsigned int i = 0; i <= cached_cell_inflation_radius_ + 1; ++i)
     {
-      if (cached_costs_[i])
-        delete[] cached_costs_[i];
+      delete[] cached_costs_[i];
     }
     delete[] cached_costs_;
-    cached_costs_ = NULL;
   }
 }
 

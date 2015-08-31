@@ -142,7 +142,7 @@ namespace dwa_local_planner {
         sim_period_ = 0.05;
       }
     }
-    ROS_INFO("Sim period is set to %.2f", sim_period_);
+    ROS_INFO("<DWA> Sim period is set to %.2f", sim_period_);
 
     oscillation_costs_.resetOscillationFlags();
 

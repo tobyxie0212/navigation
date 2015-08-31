@@ -104,6 +104,7 @@ target_link_libraries(costmap_2d
 )
 
 add_library(layers
+  plugins/footprint_layer.cpp
   plugins/inflation_layer.cpp
   plugins/obstacle_layer.cpp
   plugins/static_layer.cpp
@@ -196,7 +197,6 @@ install( TARGETS
 install(TARGETS
     costmap_2d
     layers
-    ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
     LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 )
 
