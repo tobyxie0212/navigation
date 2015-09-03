@@ -117,8 +117,13 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   double traj_length = 0;
   double rot = 0;
   double n = traj.getPointsSize();
+<<<<<<< HEAD
   double dis [3][N_MAX];	//
   double vel [3][N_MAX];  //
+=======
+  double dis [3][N_MAX];
+  double vel [3][N_MAX];
+>>>>>>> 8bce8796688dd61c0ae10aed3e93bc7333a2abeb
   double vel_mean [3];
   double vel_end [3];
   double acc [3][N_MAX];
@@ -129,7 +134,10 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   double traj_scale = 0;
   double self_scale = 0;
 
+<<<<<<< HEAD
   //clear the mean vel&acc in all DOF
+=======
+>>>>>>> 8bce8796688dd61c0ae10aed3e93bc7333a2abeb
   for (int j = 0; j < DOF; j++) {
     vel_mean[j] = 0; 
     acc_mean[j] = 0; 
@@ -194,7 +202,11 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
     theta_[4] * fabs(acc_mean[0]) +         //  a_x
     theta_[5] * fabs(acc_mean[1]) +         //  a_y
     theta_[6] * fabs(acc_mean[2]) ) * //  a_th
+<<<<<<< HEAD
     n * t /                           //  * duration (n:size of each delta traj, t:time of each delta traj
+=======
+    n * t /                           //  * duration
+>>>>>>> 8bce8796688dd61c0ae10aed3e93bc7333a2abeb
     hypot(traj_length, rot);          //  / distance
 
   // ROUTE COST
