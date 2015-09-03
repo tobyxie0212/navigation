@@ -35,8 +35,8 @@
  * Author: TKruse
  *********************************************************************/
 
-#ifndef ENERGY_COST_FUNCTION_H_
-#define ENERGY_COST_FUNCTION_H_
+#ifndef EO_ENERGY_COST_FUNCTION_H_
+#define EO_ENERGY_COST_FUNCTION_H_
 
 #include <base_local_planner/trajectory_cost_function.h>
 
@@ -98,4 +98,4 @@ private:
 };
 
 } /* namespace base_local_planner */
-#endif /* ENERGY_COST_FUNCTION_H_ */
+#endif /* EO_ENERGY_COST_FUNCTION_H_ */
