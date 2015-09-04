@@ -129,6 +129,9 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   double traj_scale = 0;
   double self_scale = 0;
 
+  //new added double variables for eo_energy_cost_function
+  
+
   //clear the mean vel&acc in all DOF
   for (int j = 0; j < DOF; j++) {
     vel_mean[j] = 0; 
