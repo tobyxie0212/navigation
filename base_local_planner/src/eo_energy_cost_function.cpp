@@ -51,38 +51,38 @@
 namespace base_local_planner {
 
 // some very bad global coding -> to be sorted out ======================================
-float route_length;
-int iter; 
-float ocoord[3];
+float eo_route_length;
+int eo_iter; 
+float eo_ocoord[3];
 
-void poseToXYTh(geometry_msgs::PoseStamped pose, float coordsarr[]){
+void eoposeToXYTh(geometry_msgs::PoseStamped pose, float coordsarr[]){
   coordsarr[0] = pose.pose.position.x;
   coordsarr[1] = pose.pose.position.y;
   coordsarr[2] = tf::getYaw(pose.pose.orientation);
 }
 
-void calcl(geometry_msgs::PoseStamped p) {
+void eocalcl(geometry_msgs::PoseStamped p) {
   float coord[3];
-  poseToXYTh(p, coord);
+  eoposeToXYTh(p, coord);
 
-  if (iter>0) {
-    route_length += hypot(fabs(ocoord[0] - coord[0]), fabs(ocoord[1] - coord[1]));
+  if (eo_iter>0) {
+    eo_route_length += hypot(fabs(eo_ocoord[0] - coord[0]), fabs(eo_ocoord[1] - coord[1]));
   }
-  iter++;
+  eo_iter++;
 
   for (int j = 0; j < DOF; j++) {
-    ocoord[j] = coord[j];
+    eo_ocoord[j] = coord[j];
   }
 }
 // ======================================================================================
 
-EnergyCostFunction::EnergyCostFunction(costmap_2d::Costmap2D* costmap) 
+EOEnergyCostFunction::EOEnergyCostFunction(costmap_2d::Costmap2D* costmap) 
     : costmap_(costmap), sum_scores_(false) {
   if (costmap != NULL) {
     world_model_ = new base_local_planner::CostmapModel(*costmap_);
   }
   new_set_ = false;
-  ROS_INFO(">>> EnergyCostFunction Created");
+  ROS_INFO(">>> EOEnergyCostFunction Created");
 
   theta_[0] = 1;
   theta_[1] = .3;
@@ -93,25 +93,25 @@ EnergyCostFunction::EnergyCostFunction(costmap_2d::Costmap2D* costmap)
   theta_[6] = .003;
 }
 
-EnergyCostFunction::~EnergyCostFunction() {
+EOEnergyCostFunction::~EOEnergyCostFunction() {
   if (world_model_ != NULL) {
     delete world_model_;
   }
 }
 
-void EnergyCostFunction::setParams(double max_trans_vel, double max_scaling_factor, double scaling_speed) {
+void EOEnergyCostFunction::setParams(double max_trans_vel, double max_scaling_factor, double scaling_speed) {
   // TODO: move this to prepare if possible
   max_trans_vel_ = max_trans_vel;
   max_scaling_factor_ = max_scaling_factor;
   scaling_speed_ = scaling_speed;
 }
 
-bool EnergyCostFunction::prepare() {
+bool EOEnergyCostFunction::prepare() {
   new_set_ = true;
   return true;
 }
 
-double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
+double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   double cost = 0;
   double x, y, th;
   double ox, oy, oth;
@@ -210,14 +210,14 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
  
   // TRAJECTORY COST   
 	//joint space: wheel rotational velocity (in pi)
-	wheel_rot_vel[1] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0]) + cos(rot)*vel_mean[1] ) + 12.6 * vel_mean[2];
-	wheel_rot_vel[2] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0]) + cos(rot)*vel_mean[1] ) + 12.6 * vel_mean[2];
-	wheel_rot_vel[3] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0]) + cos(rot)*vel_mean[1] ) - 12.6 * vel_mean[2];
-	wheel_rot_vel[4] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0]) + cos(rot)*vel_mean[1] ) - 12.6 * vel_mean[2];
+	wheel_rot_vel[1] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 12.6 * vel_mean[2];
+	wheel_rot_vel[2] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 12.6 * vel_mean[2];
+	wheel_rot_vel[3] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 12.6 * vel_mean[2];
+	wheel_rot_vel[4] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 12.6 * vel_mean[2];
 
 	//kinetic energy - robot motion
 	//wheel kinetic energy is too small and neglected
-	P_traj_kine = ( max(vel_mean[0] * acc_mean[0], 0) + max(vel_mean[1] * acc_mean[1], 0) ) * m_auckbot + max(vel_mean[2] * acc_mean[2], 0) * I_auckbot;
+	P_traj_kine = ( fmax(vel_mean[0] * acc_mean[0], 0) + fmax(vel_mean[1] * acc_mean[1], 0) ) * m_auckbot + fmax(vel_mean[2] * acc_mean[2], 0) * I_auckbot;
 
 	//friction dissipation - systain the robot's motion
 	//TODO modified this simple friction model - convert into wheel velcity rather than robot velocity
@@ -265,19 +265,19 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 	P_traj_mech = M_torque_fric * wheel_rot_vel[1] * wheel_rot_vel[1] + M_torque_fric * wheel_rot_vel[2] * wheel_rot_vel[2] + M_torque_fric * wheel_rot_vel[3] * wheel_rot_vel[3] + M_torque_fric * wheel_rot_vel[4] * wheel_rot_vel[4];
 
 	//idle consumption - onboard devices consumption
-	P)traj_idle = 72;	//standstill current 1.5 A
+	P_traj_idle = 72;	//standstill current 1.5 A
 
-	E_traj = (P_traj_kine + P_traj_fric + P_traj_elec + P_traj_mech + P_traj_ idle) * n * t;
+	E_traj = (P_traj_kine + P_traj_fric + P_traj_elec + P_traj_mech + P_traj_idle) * n * t;
 
   // ROUTE COST
-  if (route_length > traj_length) {
-    t_route = route_length - traj_length / hypot(vel_end[0], vel_end[1]);
+  if (eo_route_length > traj_length) {
+    t_route = eo_route_length - traj_length / hypot(vel_end[0], vel_end[1]);
 
 		//joint space:end wheel rotational velocity (in pi)
-		wheel_rot_vel_end[1] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0]) + cos(rot)*vel_end[1] ) + 12.6 * vel_end[2];
-		wheel_rot_vel_end[2] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0]) + cos(rot)*vel_end[1] ) + 12.6 * vel_end[2];
-		wheel_rot_vel_end[3] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0]) + cos(rot)*vel_end[1] ) - 12.6 * vel_end[2];
-		wheel_rot_vel_end[4] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0]) + cos(rot)*vel_end[1] ) - 12.6 * vel_end[2];
+		wheel_rot_vel_end[1] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) + 12.6 * vel_end[2];
+		wheel_rot_vel_end[2] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) + 12.6 * vel_end[2];
+		wheel_rot_vel_end[3] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) - 12.6 * vel_end[2];
+		wheel_rot_vel_end[4] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) - 12.6 * vel_end[2];
 
 		wheel_vel_p_end[1] = ( vel_end[0]-vel_end[2]*(-0.328*cos(rot)+0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_end[1]-vel_end[2]*(-0.328*sin(rot)-0.328*cos(rot)) )*sin(0.25*PI+rot);
 		wheel_vel_p_end[2] = ( vel_end[0]-vel_end[2]*( 0.328*cos(rot)+0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_end[1]-vel_end[2]*( 0.328*sin(rot)-0.328*cos(rot)) )*sin(0.75*PI+rot);
@@ -319,9 +319,9 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 
 		P_traj_mech_end = M_torque_fric * wheel_rot_vel_end[1] * wheel_rot_vel_end[1] + M_torque_fric * wheel_rot_vel_end[2] * wheel_rot_vel_end[2] + M_torque_fric * wheel_rot_vel_end[3] * wheel_rot_vel_end[3] + M_torque_fric * wheel_rot_vel_end[4] * wheel_rot_vel_end[4];
 		
-    E_route = (P_traj_fric_end + P_traj_elec_end + P_traj_mech_end + P_traj_ idle)*t_route;
+    E_route = (P_traj_fric_end + P_traj_elec_end + P_traj_mech_end + P_traj_idle)*t_route;
 
-    traj_scale = traj_length / route_length;       
+    traj_scale = traj_length / eo_route_length;       
   } else { // trajectory leads already to goal
     E_route = 0;
     traj_scale = 1; 
@@ -340,32 +340,32 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 	cost *= self_scale;
 
 	ROS_INFO(">>> traj_scale: %4.2f, cost: %3.1f", traj_scale, cost);
-	ROS_INFO("    traj_length: %5.2f, route_length: %5.2f", traj_length, route_length);
+	ROS_INFO("    traj_length: %5.2f, eo_route_length: %5.2f", traj_length, eo_route_length);
   return cost;
 }
 
-void EnergyCostFunction::setLastSpeeds(double x, double y, double th) {
+void EOEnergyCostFunction::setLastSpeeds(double x, double y, double th) {
   last_speeds_[0] = x;
   last_speeds_[1] = y;
   last_speeds_[2] = th;
 }
 
-void EnergyCostFunction::thetaCallback(const auckbot_analysis::ModelTheta msg) {
+void EOEnergyCostFunction::thetaCallback(const auckbot_analysis::ModelTheta msg) {
   ROS_INFO("------> thetaCallback <----");
 }
 
-void EnergyCostFunction::setRoute(std::vector<geometry_msgs::PoseStamped> global_plan) {
+void EOEnergyCostFunction::setRoute(std::vector<geometry_msgs::PoseStamped> global_plan) {
   route_ = global_plan;
   geometry_msgs::PoseStamped goal = route_.back();
 
   float goalc[3];
-  poseToXYTh(goal, goalc);
+  eoposeToXYTh(goal, goalc);
   // ROS_INFO("Goal: %f, %f, %f", goalc[0], goalc[1], goalc[2]);
 
-  iter = 0;
-  route_length = 0;
-  for_each (route_.begin(), route_.end(), calcl);
-  // ROS_INFO("Length: %f", route_length);
+  eo_iter = 0;
+  eo_route_length = 0;
+  for_each (route_.begin(), route_.end(), eocalcl);
+  // ROS_INFO("Length: %f", eo_route_length);
 }
 
 } /* namespace base_local_planner */

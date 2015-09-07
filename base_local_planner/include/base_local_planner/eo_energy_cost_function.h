@@ -59,11 +59,11 @@ namespace base_local_planner {
  * is in obstacle on any point of the trajectory.
  */
 
-class EnergyCostFunction : public TrajectoryCostFunction {
+class EOEnergyCostFunction : public TrajectoryCostFunction {
 
 public:
-  EnergyCostFunction(costmap_2d::Costmap2D* costmap);
-  ~EnergyCostFunction();
+  EOEnergyCostFunction(costmap_2d::Costmap2D* costmap);
+  ~EOEnergyCostFunction();
 
   bool prepare();
   double scoreTrajectory(Trajectory &traj);
