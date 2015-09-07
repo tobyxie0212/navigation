@@ -46,6 +46,7 @@
 #define PI 3.14159265359
 #define DOF 3
 #define N_MAX 50
+#define G 9.81
 
 namespace base_local_planner {
 
@@ -130,7 +131,26 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   double self_scale = 0;
 
   //new added double variables for eo_energy_cost_function
-  
+	double wheel_rot_vel [5]; //ignore [0] for easy name assignment
+	double wheel_rot_vel_end [5];
+  double wheel_vel_p [5]; //wheel velocity in parallel direction
+	double wheel_vel_p_end [5];
+	//double wheel_thrust_p [5]; //wheel thrust force in parrallel direction
+	double u_static_fric [5]; //static friction of each wheel
+	double u_static_fric_end [5];
+	double I_motor_pred [5]; //predicted current of each motor for the planned trajectories
+	double I_motor_pred_end [5];
+	double P_traj_kine, P_traj_fric, P_traj_elec, P_traj_mech, P_traj_idle;
+	double P_traj_fric_end, P_traj_elec_end, P_traj_mech_end;
+	
+	//params for Auckbot TODO:move it to setParams void
+	double m_auckbot = 94; //94 kg
+	double I_auckbot = 19; //moment of inertia of the robot in Z direction
+	double u_viscous_fric = 0.2 ;//viscous friction coefficient
+	double u_rolling_fric = 0.035;
+	double u_sliding_fric = 0.5;
+	double R_armature = 0.81;
+	double M_torque_fric = 0.0195;
 
   //clear the mean vel&acc in all DOF
   for (int j = 0; j < DOF; j++) {
@@ -189,34 +209,125 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   }
  
   // TRAJECTORY COST   
-  E_traj = 
-   (theta_[0] +                       //  th_1
-    theta_[1] * fabs(vel_mean[0]) +   //  v_x
-    theta_[2] * fabs(vel_mean[1]) +   //  v_y
-    theta_[3] * fabs(vel_mean[2]) +   //  v_th
-    theta_[4] * fabs(acc_mean[0]) +         //  a_x
-    theta_[5] * fabs(acc_mean[1]) +         //  a_y
-    theta_[6] * fabs(acc_mean[2]) ) * //  a_th
-    n * t /                           //  * duration (n:size of each delta traj, t:time of each delta traj
-    hypot(traj_length, rot);          //  / distance
+	//joint space: wheel rotational velocity (in pi)
+	wheel_rot_vel[1] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0]) + cos(rot)*vel_mean[1] ) + 12.6 * vel_mean[2];
+	wheel_rot_vel[2] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0]) + cos(rot)*vel_mean[1] ) + 12.6 * vel_mean[2];
+	wheel_rot_vel[3] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0]) + cos(rot)*vel_mean[1] ) - 12.6 * vel_mean[2];
+	wheel_rot_vel[4] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0]) + cos(rot)*vel_mean[1] ) - 12.6 * vel_mean[2];
+
+	//kinetic energy - robot motion
+	//wheel kinetic energy is too small and neglected
+	P_traj_kine = ( max(vel_mean[0] * acc_mean[0], 0) + max(vel_mean[1] * acc_mean[1], 0) ) * m_auckbot + max(vel_mean[2] * acc_mean[2], 0) * I_auckbot;
+
+	//friction dissipation - systain the robot's motion
+	//TODO modified this simple friction model - convert into wheel velcity rather than robot velocity
+	//P_traj_fric = u_viscous_fric * m_auckbot * G * ( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ); //simple version
+	wheel_vel_p[1] = ( vel_mean[0]-vel_mean[2]*(-0.328*cos(rot)+0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_mean[1]-vel_mean[2]*(-0.328*sin(rot)-0.328*cos(rot)) )*sin(0.25*PI+rot);
+	wheel_vel_p[2] = ( vel_mean[0]-vel_mean[2]*( 0.328*cos(rot)+0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_mean[1]-vel_mean[2]*( 0.328*sin(rot)-0.328*cos(rot)) )*sin(0.75*PI+rot);
+	wheel_vel_p[3] = ( vel_mean[0]-vel_mean[2]*( 0.328*cos(rot)-0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_mean[1]-vel_mean[2]*( 0.328*sin(rot)+0.328*cos(rot)) )*sin(0.25*PI+rot);
+	wheel_vel_p[4] = ( vel_mean[0]-vel_mean[2]*(-0.328*cos(rot)-0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_mean[1]-vel_mean[2]*(-0.328*sin(rot)+0.328*cos(rot)) )*sin(0.75*PI+rot);
+
+	if (wheel_vel_p[1] * wheel_rot_vel[1] > 0) {
+	u_static_fric[1] = u_rolling_fric;
+	} else {
+	u_static_fric[1] = u_sliding_fric;
+	}
+
+	if (wheel_vel_p[2] * wheel_rot_vel[2] > 0) {
+	u_static_fric[2] = u_rolling_fric;
+	} else {
+	u_static_fric[2] = u_sliding_fric;
+	}
+
+	if (wheel_vel_p[3] * wheel_rot_vel[3] > 0) {
+	u_static_fric[3] = u_rolling_fric;
+	} else {
+	u_static_fric[3] = u_sliding_fric;
+	}
+
+	if (wheel_vel_p[4] * wheel_rot_vel[4] > 0) {
+	u_static_fric[4] = u_rolling_fric;
+	} else {
+	u_static_fric[4] = u_sliding_fric;
+	}
+
+	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) );
+
+	//electric dissipation
+	I_motor_pred[1] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[1])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[1] + u_static_fric[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[1]) )/36.25;
+	I_motor_pred[2] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[2])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[2] + u_static_fric[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[2]) )/36.25;
+	I_motor_pred[3] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[3])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[3] + u_static_fric[3]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[3]) )/36.25;
+	I_motor_pred[4] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[4])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[4] + u_static_fric[4]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[4]) )/36.25;
+
+	P_traj_elec = R_armature * I_motor_pred[1] * I_motor_pred[1] + R_armature * I_motor_pred[2] * I_motor_pred[2] + R_armature * I_motor_pred[3] * I_motor_pred[3] + R_armature * I_motor_pred[4] * I_motor_pred[4];
+
+	//mechanical dissipation
+	P_traj_mech = M_torque_fric * wheel_rot_vel[1] * wheel_rot_vel[1] + M_torque_fric * wheel_rot_vel[2] * wheel_rot_vel[2] + M_torque_fric * wheel_rot_vel[3] * wheel_rot_vel[3] + M_torque_fric * wheel_rot_vel[4] * wheel_rot_vel[4];
+
+	//idle consumption - onboard devices consumption
+	P)traj_idle = 72;	//standstill current 1.5 A
+
+	E_traj = (P_traj_kine + P_traj_fric + P_traj_elec + P_traj_mech + P_traj_ idle) * n * t;
 
   // ROUTE COST
   if (route_length > traj_length) {
     t_route = route_length - traj_length / hypot(vel_end[0], vel_end[1]);
-    E_route = 
-     (theta_[0] +                       //  th_1
-      theta_[1] * fabs(vel_end[0]) +    //  v_x
-      theta_[2] * fabs(vel_end[1]) +    //  v_y
-      theta_[3] * fabs(vel_end[2]) ) *  //  v_th
-      t_route /                         //  * duration
-      route_length - traj_length;       //  / distance
+
+		//joint space:end wheel rotational velocity (in pi)
+		wheel_rot_vel_end[1] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0]) + cos(rot)*vel_end[1] ) + 12.6 * vel_end[2];
+		wheel_rot_vel_end[2] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0]) + cos(rot)*vel_end[1] ) + 12.6 * vel_end[2];
+		wheel_rot_vel_end[3] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0]) + cos(rot)*vel_end[1] ) - 12.6 * vel_end[2];
+		wheel_rot_vel_end[4] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0]) + cos(rot)*vel_end[1] ) - 12.6 * vel_end[2];
+
+		wheel_vel_p_end[1] = ( vel_end[0]-vel_end[2]*(-0.328*cos(rot)+0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_end[1]-vel_end[2]*(-0.328*sin(rot)-0.328*cos(rot)) )*sin(0.25*PI+rot);
+		wheel_vel_p_end[2] = ( vel_end[0]-vel_end[2]*( 0.328*cos(rot)+0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_end[1]-vel_end[2]*( 0.328*sin(rot)-0.328*cos(rot)) )*sin(0.75*PI+rot);
+		wheel_vel_p_end[3] = ( vel_end[0]-vel_end[2]*( 0.328*cos(rot)-0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_end[1]-vel_end[2]*( 0.328*sin(rot)+0.328*cos(rot)) )*sin(0.25*PI+rot);
+		wheel_vel_p_end[4] = ( vel_end[0]-vel_end[2]*(-0.328*cos(rot)-0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_end[1]-vel_end[2]*(-0.328*sin(rot)+0.328*cos(rot)) )*sin(0.75*PI+rot);
+
+		if (wheel_vel_p_end[1] * wheel_rot_vel_end[1] > 0) {
+		u_static_fric_end[1] = u_rolling_fric;
+		} else {
+		u_static_fric_end[1] = u_sliding_fric;
+		}
+
+		if (wheel_vel_p_end[2] * wheel_rot_vel_end[2] > 0) {
+		u_static_fric_end[2] = u_rolling_fric;
+		} else {
+		u_static_fric_end[2] = u_sliding_fric;
+		}
+
+		if (wheel_vel_p_end[3] * wheel_rot_vel_end[3] > 0) {
+		u_static_fric_end[3] = u_rolling_fric;
+		} else {
+		u_static_fric_end[3] = u_sliding_fric;
+		}
+
+		if (wheel_vel_p_end[4] * wheel_rot_vel_end[4] > 0) {
+		u_static_fric_end[4] = u_rolling_fric;
+		} else {
+		u_static_fric_end[4] = u_sliding_fric;
+		}
+
+		P_traj_fric_end = u_static_fric_end[1]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[1]) + u_static_fric_end[2]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[2]) + u_static_fric_end[3]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[3]) + u_static_fric_end[4]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_end[0])*fabs(vel_end[0]) + fabs(vel_end[1])*fabs(vel_end[1]) );
+
+		I_motor_pred_end[1] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[1] + u_static_fric_end[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[1]) )/36.25;
+		I_motor_pred_end[2] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[2] + u_static_fric_end[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[2]) )/36.25;
+		I_motor_pred_end[3] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[3] + u_static_fric_end[3]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[3]) )/36.25;
+		I_motor_pred_end[4] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[4] + u_static_fric_end[4]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[4]) )/36.25;
+
+		P_traj_elec_end = R_armature * I_motor_pred_end[1] * I_motor_pred_end[1] + R_armature * I_motor_pred_end[2] * I_motor_pred_end[2] + R_armature * I_motor_pred_end[3] * I_motor_pred_end[3] + R_armature * I_motor_pred_end[4] * I_motor_pred_end[4];
+
+		P_traj_mech_end = M_torque_fric * wheel_rot_vel_end[1] * wheel_rot_vel_end[1] + M_torque_fric * wheel_rot_vel_end[2] * wheel_rot_vel_end[2] + M_torque_fric * wheel_rot_vel_end[3] * wheel_rot_vel_end[3] + M_torque_fric * wheel_rot_vel_end[4] * wheel_rot_vel_end[4];
+		
+    E_route = (P_traj_fric_end + P_traj_elec_end + P_traj_mech_end + P_traj_ idle)*t_route;
+
     traj_scale = traj_length / route_length;       
   } else { // trajectory leads already to goal
     E_route = 0;
     traj_scale = 1; 
   }
 
-	traj_scale += 0.3;
+	//traj_scale += 0.3;
 	if (traj_scale > 1) traj_scale = 1;
 	self_scale = 0.7;
 
