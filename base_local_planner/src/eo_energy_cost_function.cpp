@@ -210,10 +210,10 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
  
   // TRAJECTORY COST   
 	//joint space: wheel rotational velocity (in pi)
-	wheel_rot_vel[1] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 12.6 * vel_mean[2];
-	wheel_rot_vel[2] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 12.6 * vel_mean[2];
-	wheel_rot_vel[3] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 12.6 * vel_mean[2];
-	wheel_rot_vel[4] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 12.6 * vel_mean[2];
+	wheel_rot_vel[1] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 6.3 * vel_mean[2];
+	wheel_rot_vel[2] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 6.3 * vel_mean[2];
+	wheel_rot_vel[3] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 6.3 * vel_mean[2];
+	wheel_rot_vel[4] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 6.3 * vel_mean[2];
 
 	//kinetic energy - robot motion
 	//wheel kinetic energy is too small and neglected
@@ -274,10 +274,10 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
     t_route = eo_route_length - traj_length / hypot(vel_end[0], vel_end[1]);
 
 		//joint space:end wheel rotational velocity (in pi)
-		wheel_rot_vel_end[1] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) + 12.6 * vel_end[2];
-		wheel_rot_vel_end[2] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) + 12.6 * vel_end[2];
-		wheel_rot_vel_end[3] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) - 12.6 * vel_end[2];
-		wheel_rot_vel_end[4] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) - 12.6 * vel_end[2];
+		wheel_rot_vel_end[1] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) + 6.3 * vel_end[2];
+		wheel_rot_vel_end[2] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) + 6.3 * vel_end[2];
+		wheel_rot_vel_end[3] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) - 6.3 * vel_end[2];
+		wheel_rot_vel_end[4] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) - 10.7*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) - 6.3 * vel_end[2];
 
 		wheel_vel_p_end[1] = ( vel_end[0]-vel_end[2]*(-0.328*cos(rot)+0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_end[1]-vel_end[2]*(-0.328*sin(rot)-0.328*cos(rot)) )*sin(0.25*PI+rot);
 		wheel_vel_p_end[2] = ( vel_end[0]-vel_end[2]*( 0.328*cos(rot)+0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_end[1]-vel_end[2]*( 0.328*sin(rot)-0.328*cos(rot)) )*sin(0.75*PI+rot);
