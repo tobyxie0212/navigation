@@ -63,6 +63,8 @@ namespace base_local_planner {
 
       double time_delta_; ///< @brief The time gap between points
 
+			double DWAxa_, DWAya_, DWAthetaa_; //for DWA only. Each DWA simulation has one point, not enough to calculate acceleration during the simulation
+
       /**
        * @brief  Get a point within the trajectory
        * @param index The index of the point to get

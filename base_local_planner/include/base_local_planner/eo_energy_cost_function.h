@@ -66,6 +66,7 @@ public:
   ~EOEnergyCostFunction();
 
   bool prepare();
+
   double scoreTrajectory(Trajectory &traj);
 
   void setSumScores(bool score_sums){ sum_scores_=score_sums; }

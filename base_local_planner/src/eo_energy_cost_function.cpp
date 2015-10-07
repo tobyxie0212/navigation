@@ -112,7 +112,10 @@ bool EOEnergyCostFunction::prepare() {
 }
 
 double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
-  double cost = 0;
+	//
+	double test_vx = traj.DWAthetaa_;
+	//  
+	double cost = 0;
   double x, y, th;
   double ox, oy, oth;
   double traj_length = 0;
@@ -157,7 +160,12 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
     vel_mean[j] = 0; 
     acc_mean[j] = 0; 
   }
+	
 
+
+
+if (n > 1) {
+	
   int i; // (WE WILL NEED THE i LATER !!)
   for (i = 0; i < n; ++i) { 
     traj.getPoint(i, x, y, th);
@@ -207,6 +215,25 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
     vel_mean[j] /= n-1;
     acc_mean[j] /= n-2; 
   }
+
+} else {
+	vel_mean[0] = traj.xv_ - traj.DWAxa_*0.025;
+	vel_mean[1] = traj.yv_ - traj.DWAya_*0.025;
+	vel_mean[2] = traj.thetav_ - traj.DWAthetaa_*0.025;
+	
+	acc_mean[0] = traj.DWAxa_;
+	acc_mean[1] = traj.DWAya_;
+	acc_mean[2] = traj.DWAthetaa_;
+
+	traj_length = hypot( vel_mean[0]* 0.05, vel_mean[1]* 0.05);
+	
+	traj.getPoint(0 , x, y, th);
+	rot = fmod(th, (2*PI));
+
+	vel_end[0] = traj.xv_;
+	vel_end[1] = traj.yv_;
+	vel_end[2] = traj.thetav_;
+}
  
   // TRAJECTORY COST   
 	//joint space: wheel rotational velocity (in pi)
@@ -227,25 +254,25 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 	wheel_vel_p[3] = ( vel_mean[0]-vel_mean[2]*( 0.328*cos(rot)-0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_mean[1]-vel_mean[2]*( 0.328*sin(rot)+0.328*cos(rot)) )*sin(0.25*PI+rot);
 	wheel_vel_p[4] = ( vel_mean[0]-vel_mean[2]*(-0.328*cos(rot)-0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_mean[1]-vel_mean[2]*(-0.328*sin(rot)+0.328*cos(rot)) )*sin(0.75*PI+rot);
 
-	if (wheel_vel_p[1] * wheel_rot_vel[1] > 0) {
+	if (wheel_vel_p[1] * wheel_rot_vel[1] >= 0) {
 	u_static_fric[1] = u_rolling_fric;
 	} else {
 	u_static_fric[1] = u_sliding_fric;
 	}
 
-	if (wheel_vel_p[2] * wheel_rot_vel[2] > 0) {
+	if (wheel_vel_p[2] * wheel_rot_vel[2] >= 0) {
 	u_static_fric[2] = u_rolling_fric;
 	} else {
 	u_static_fric[2] = u_sliding_fric;
 	}
 
-	if (wheel_vel_p[3] * wheel_rot_vel[3] > 0) {
+	if (wheel_vel_p[3] * wheel_rot_vel[3] >= 0) {
 	u_static_fric[3] = u_rolling_fric;
 	} else {
 	u_static_fric[3] = u_sliding_fric;
 	}
 
-	if (wheel_vel_p[4] * wheel_rot_vel[4] > 0) {
+	if (wheel_vel_p[4] * wheel_rot_vel[4] >= 0) {
 	u_static_fric[4] = u_rolling_fric;
 	} else {
 	u_static_fric[4] = u_sliding_fric;
@@ -284,25 +311,25 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 		wheel_vel_p_end[3] = ( vel_end[0]-vel_end[2]*( 0.328*cos(rot)-0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_end[1]-vel_end[2]*( 0.328*sin(rot)+0.328*cos(rot)) )*sin(0.25*PI+rot);
 		wheel_vel_p_end[4] = ( vel_end[0]-vel_end[2]*(-0.328*cos(rot)-0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_end[1]-vel_end[2]*(-0.328*sin(rot)+0.328*cos(rot)) )*sin(0.75*PI+rot);
 
-		if (wheel_vel_p_end[1] * wheel_rot_vel_end[1] > 0) {
+		if (wheel_vel_p_end[1] * wheel_rot_vel_end[1] >= 0) {
 		u_static_fric_end[1] = u_rolling_fric;
 		} else {
 		u_static_fric_end[1] = u_sliding_fric;
 		}
 
-		if (wheel_vel_p_end[2] * wheel_rot_vel_end[2] > 0) {
+		if (wheel_vel_p_end[2] * wheel_rot_vel_end[2] >= 0) {
 		u_static_fric_end[2] = u_rolling_fric;
 		} else {
 		u_static_fric_end[2] = u_sliding_fric;
 		}
 
-		if (wheel_vel_p_end[3] * wheel_rot_vel_end[3] > 0) {
+		if (wheel_vel_p_end[3] * wheel_rot_vel_end[3] >= 0) {
 		u_static_fric_end[3] = u_rolling_fric;
 		} else {
 		u_static_fric_end[3] = u_sliding_fric;
 		}
 
-		if (wheel_vel_p_end[4] * wheel_rot_vel_end[4] > 0) {
+		if (wheel_vel_p_end[4] * wheel_rot_vel_end[4] >= 0) {
 		u_static_fric_end[4] = u_rolling_fric;
 		} else {
 		u_static_fric_end[4] = u_sliding_fric;

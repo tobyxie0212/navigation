@@ -228,6 +228,11 @@ bool SimpleTrajectoryGenerator::generateTrajectory(
     traj.xv_     = sample_target_vel[0];
     traj.yv_     = sample_target_vel[1];
     traj.thetav_ = sample_target_vel[2];
+
+		//calculate acceleration
+		traj.DWAxa_ = ( traj.xv_ - vel[0] )/0.05;
+		traj.DWAya_ = ( traj.yv_ - vel[1] )/0.05;
+		traj.DWAthetaa_ = ( traj.thetav_ - vel[2] )/0.05;
   }
 
   //simulate the trajectory and check for collisions, updating costs along the way
