@@ -148,10 +148,10 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 	
 	//params for Auckbot TODO:move it to setParams void
 	double m_auckbot = 94; //94 kg
-	double I_auckbot = 19; //moment of inertia of the robot in Z direction
-	double u_viscous_fric = 0.2 ;//viscous friction coefficient
-	double u_rolling_fric = 0.035;
-	double u_sliding_fric = 0.5;
+	double I_auckbot = 25; //moment of inertia of the robot in Z direction
+	double u_rolling_fric = 0.15;
+	double u_sliding_fric = 0.9;
+	double u_viscous_fric = 0.5 ;//viscous friction coefficient
 	double R_armature = 0.81;
 	double M_torque_fric = 0.0195;
 
@@ -236,11 +236,11 @@ if (n > 1) {
 }
  
   // TRAJECTORY COST   
-	//joint space: wheel rotational velocity (in pi)
-	wheel_rot_vel[1] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 6.3 * vel_mean[2];
-	wheel_rot_vel[2] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 6.3 * vel_mean[2];
-	wheel_rot_vel[3] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 6.3 * vel_mean[2];
-	wheel_rot_vel[4] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 10.7*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 6.3 * vel_mean[2];
+	//joint space: wheel rotational velocity (in pi) (PhD/second year/ros 2d navigation stack/kinematics_matrix_variables)
+	wheel_rot_vel[1] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 9.1*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 6 * vel_mean[2];
+	wheel_rot_vel[2] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 9.1*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 6 * vel_mean[2];
+	wheel_rot_vel[3] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 9.1*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 6 * vel_mean[2];
+	wheel_rot_vel[4] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 9.1*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 6 * vel_mean[2];
 
 	//kinetic energy - robot motion
 	//wheel kinetic energy is too small and neglected
@@ -249,10 +249,17 @@ if (n > 1) {
 	//friction dissipation - systain the robot's motion
 	//TODO modified this simple friction model - convert into wheel velcity rather than robot velocity
 	//P_traj_fric = u_viscous_fric * m_auckbot * G * ( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ); //simple version
+	if (vel_mean[1]==0 && vel_mean[2]==0) {
+	wheel_vel_p[1] = vel_mean[0];
+	wheel_vel_p[2] = vel_mean[0];
+	wheel_vel_p[3] = vel_mean[0];
+	wheel_vel_p[4] = vel_mean[0];
+	} else {
 	wheel_vel_p[1] = ( vel_mean[0]-vel_mean[2]*(-0.328*cos(rot)+0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_mean[1]-vel_mean[2]*(-0.328*sin(rot)-0.328*cos(rot)) )*sin(0.25*PI+rot);
 	wheel_vel_p[2] = ( vel_mean[0]-vel_mean[2]*( 0.328*cos(rot)+0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_mean[1]-vel_mean[2]*( 0.328*sin(rot)-0.328*cos(rot)) )*sin(0.75*PI+rot);
 	wheel_vel_p[3] = ( vel_mean[0]-vel_mean[2]*( 0.328*cos(rot)-0.328*sin(rot)) )*cos(0.25*PI+rot) + ( vel_mean[1]-vel_mean[2]*( 0.328*sin(rot)+0.328*cos(rot)) )*sin(0.25*PI+rot);
 	wheel_vel_p[4] = ( vel_mean[0]-vel_mean[2]*(-0.328*cos(rot)-0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_mean[1]-vel_mean[2]*(-0.328*sin(rot)+0.328*cos(rot)) )*sin(0.75*PI+rot);
+	}
 
 	if (wheel_vel_p[1] * wheel_rot_vel[1] >= 0) {
 	u_static_fric[1] = u_rolling_fric;
@@ -280,11 +287,11 @@ if (n > 1) {
 
 	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) );
 
-	//electric dissipation
-	I_motor_pred[1] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[1])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[1] + u_static_fric[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[1]) )/36.25;
-	I_motor_pred[2] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[2])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[2] + u_static_fric[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[2]) )/36.25;
-	I_motor_pred[3] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[3])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[3] + u_static_fric[3]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[3]) )/36.25;
-	I_motor_pred[4] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[4])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[4] + u_static_fric[4]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[4]) )/36.25;
+	//electric dissipation(scale down the current weight by four)
+	I_motor_pred[1] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[1])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[1] + u_static_fric[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[1]) )/36.25/4;
+	I_motor_pred[2] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[2])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[2] + u_static_fric[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[2]) )/36.25/4;
+	I_motor_pred[3] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[3])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[3] + u_static_fric[3]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[3]) )/36.25/4;
+	I_motor_pred[4] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[4])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[4] + u_static_fric[4]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[4]) )/36.25/4;
 
 	P_traj_elec = R_armature * I_motor_pred[1] * I_motor_pred[1] + R_armature * I_motor_pred[2] * I_motor_pred[2] + R_armature * I_motor_pred[3] * I_motor_pred[3] + R_armature * I_motor_pred[4] * I_motor_pred[4];
 
@@ -292,7 +299,7 @@ if (n > 1) {
 	P_traj_mech = M_torque_fric * wheel_rot_vel[1] * wheel_rot_vel[1] + M_torque_fric * wheel_rot_vel[2] * wheel_rot_vel[2] + M_torque_fric * wheel_rot_vel[3] * wheel_rot_vel[3] + M_torque_fric * wheel_rot_vel[4] * wheel_rot_vel[4];
 
 	//idle consumption - onboard devices consumption
-	P_traj_idle = 72;	//standstill current 1.5 A
+	P_traj_idle = 76.32;	//standstill current 1.59 A
 
 	E_traj = (P_traj_kine + P_traj_fric + P_traj_elec + P_traj_mech + P_traj_idle) * n * t;
 
