@@ -136,7 +136,7 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   //new added double variables for eo_energy_cost_function
 	double wheel_rot_vel [5]; //ignore [0] for easy name assignment
 	double wheel_rot_vel_end [5];
-  double wheel_vel_p [5]; //wheel velocity in parallel direction
+	double wheel_vel_p [5]; //wheel velocity in parallel direction
 	double wheel_vel_p_end [5];
 	//double wheel_thrust_p [5]; //wheel thrust force in parrallel direction
 	double u_static_fric [5]; //static friction of each wheel
@@ -151,7 +151,8 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 	double I_auckbot = 25; //moment of inertia of the robot in Z direction
 	double u_rolling_fric = 0.15;
 	double u_sliding_fric = 0.9;
-	double u_viscous_fric = 0.5 ;//viscous friction coefficient
+	double u_viscous_fric = 0.5 ;					//viscous friction coefficient for robot translation
+	double u_viscous_fric_rotation = 0.5; //viscous friction coefficient for robot rotation
 	double R_armature = 0.81;
 	double M_torque_fric = 0.0195;
 
@@ -261,6 +262,7 @@ if (n > 1) {
 	wheel_vel_p[4] = ( vel_mean[0]-vel_mean[2]*(-0.328*cos(rot)-0.328*sin(rot)) )*cos(0.75*PI+rot) + ( vel_mean[1]-vel_mean[2]*(-0.328*sin(rot)+0.328*cos(rot)) )*sin(0.75*PI+rot);
 	}
 
+	//determine to use either rolling friction coefficient or sliding friction coefficient (so complex motion determination must be done before here)
 	if (wheel_vel_p[1] * wheel_rot_vel[1] >= 0) {
 	u_static_fric[1] = u_rolling_fric;
 	} else {
@@ -285,7 +287,8 @@ if (n > 1) {
 	u_static_fric[4] = u_sliding_fric;
 	}
 
-	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) );
+	//friction dissipation
+	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ) + u_viscous_fric_rotation*m_auckbot*G*fabs(vel_mean[2])*fabs(vel_mean[2]);
 
 	//electric dissipation(scale down the current weight by four)
 	I_motor_pred[1] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[1])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[1] + u_static_fric[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[1]) )/36.25/4;
