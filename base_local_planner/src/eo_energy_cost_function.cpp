@@ -237,12 +237,46 @@ if (n > 1) {
 }
  
   // TRAJECTORY COST   
+
+	//distinguish motion type
+	if ( ( (vel_mean[0]==0)&&(vel_mean[1]==0) )||( (vel_mean[1]==0)&&(vel_mean[2]==0) )||( (vel_mean[0]==0)&&(vel_mean[2]==0) ) ) {
+	//primitive motion
+	u_rolling_fric = 0.15;
+	u_sliding_fric = 0.9;
+	u_viscous_fric = 0.5 ;
+	u_viscous_fric_rotation = 0.5;
+	} else if (vel_mean[0]==0) {
+	//YZ strafing curve
+	u_rolling_fric = 0.15;
+	u_sliding_fric = 0.9;
+	u_viscous_fric = 0.5 ;
+	u_viscous_fric_rotation = 0.5;
+	} else if (vel_mean[1]==0) {
+	//XZ forward curve
+	u_rolling_fric = 0.15;
+	u_sliding_fric = 0.9;
+	u_viscous_fric = 0.5 ;
+	u_viscous_fric_rotation = 0.5;
+	} else if (vel_mean[2]==0) {
+	//XY diagonal
+	u_rolling_fric = 0.15;
+	u_sliding_fric = 0.9;
+	u_viscous_fric = 0.5 ;
+	u_viscous_fric_rotation = 0.5;
+	} else {
+	//XYZ diagonal curve
+	u_rolling_fric = 0.15;
+	u_sliding_fric = 0.9;
+	u_viscous_fric = 0.5 ;
+	u_viscous_fric_rotation = 0.5;
+	}
+
 	//joint space: wheel rotational velocity (in pi) (PhD/second year/ros 2d navigation stack/kinematics_matrix_variables)
 	wheel_rot_vel[1] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 9.1*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 6 * vel_mean[2];
 	wheel_rot_vel[2] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 9.1*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) + 6 * vel_mean[2];
 	wheel_rot_vel[3] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) + 9.1*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 6 * vel_mean[2];
 	wheel_rot_vel[4] = 9.1*( cos(rot)*vel_mean[0] + sin(rot)*vel_mean[1] ) - 9.1*( -sin(rot)*vel_mean[0] + cos(rot)*vel_mean[1] ) - 6 * vel_mean[2];
-
+	
 	//kinetic energy - robot motion
 	//wheel kinetic energy is too small and neglected
 	P_traj_kine = ( fmax(vel_mean[0] * acc_mean[0], 0) + fmax(vel_mean[1] * acc_mean[1], 0) ) * m_auckbot + fmax(vel_mean[2] * acc_mean[2], 0) * I_auckbot;
@@ -291,11 +325,18 @@ if (n > 1) {
 	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ) + u_viscous_fric_rotation*m_auckbot*G*fabs(vel_mean[2])*fabs(vel_mean[2]);
 
 	//electric dissipation(scale down the current weight by four)
-	I_motor_pred[1] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[1])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[1] + u_static_fric[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[1]) )/36.25/4;
-	I_motor_pred[2] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[2])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[2] + u_static_fric[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[2]) )/36.25/4;
-	I_motor_pred[3] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[3])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[3] + u_static_fric[3]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[3]) )/36.25/4;
-	I_motor_pred[4] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[4])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[4] + u_static_fric[4]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[4]) )/36.25/4;
+	I_motor_pred[1] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[1])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[1] + u_static_fric[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[1]) )/36.25;
+	I_motor_pred[2] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[2])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[2])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[2] + u_static_fric[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[2]) )/36.25;
+	I_motor_pred[3] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[3])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[3])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[3] + u_static_fric[3]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[3]) )/36.25;
+	I_motor_pred[4] = ( (-cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[0] + (-sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[4])*m_auckbot*acc_mean[1] - 0.54*copysign(1.0,wheel_rot_vel[4])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[4] + u_static_fric[4]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[4]) )/36.25;
 
+	if ( ( (vel_mean[0]==0)&&(vel_mean[1]==0) )||( (vel_mean[1]==0)&&(vel_mean[2]==0) )||( (vel_mean[0]==0)&&(vel_mean[2]==0) ) ) {
+	//primitive motion model requires current term scale down
+	I_motor_pred[1] = I_motor_pred[1]/4;
+	I_motor_pred[2] = I_motor_pred[2]/4;
+	I_motor_pred[3] = I_motor_pred[3]/4;
+	I_motor_pred[4] = I_motor_pred[4]/4;
+	} 
 
 	P_traj_elec = R_armature * I_motor_pred[1] * I_motor_pred[1] + R_armature * I_motor_pred[2] * I_motor_pred[2] + R_armature * I_motor_pred[3] * I_motor_pred[3] + R_armature * I_motor_pred[4] * I_motor_pred[4];
 
@@ -310,6 +351,39 @@ if (n > 1) {
   // ROUTE COST
   if (eo_route_length > traj_length) {
     t_route = eo_route_length - traj_length / hypot(vel_end[0], vel_end[1]);
+		
+			//distinguish motion type
+		if ( ( (vel_end[0]==0)&&(vel_end[1]==0) )||( (vel_end[1]==0)&&(vel_end[2]==0) )||( (vel_end[0]==0)&&(vel_end[2]==0) ) ) {
+		//primitive motion
+		u_rolling_fric = 0.15;
+		u_sliding_fric = 0.9;
+		u_viscous_fric = 0.5 ;
+		u_viscous_fric_rotation = 0.5;
+		} else if (vel_end[0]==0) {
+		//YZ strafing curve
+		u_rolling_fric = 0.15;
+		u_sliding_fric = 0.9;
+		u_viscous_fric = 0.5 ;
+		u_viscous_fric_rotation = 0.5;
+		} else if (vel_end[1]==0) {
+		//XZ forward curve
+		u_rolling_fric = 0.15;
+		u_sliding_fric = 0.9;
+		u_viscous_fric = 0.5 ;
+		u_viscous_fric_rotation = 0.5;
+		} else if (vel_end[2]==0) {
+		//XY diagonal
+		u_rolling_fric = 0.15;
+		u_sliding_fric = 0.9;
+		u_viscous_fric = 0.5 ;
+		u_viscous_fric_rotation = 0.5;
+		} else {
+		//XYZ diagonal curve
+		u_rolling_fric = 0.15;
+		u_sliding_fric = 0.9;
+		u_viscous_fric = 0.5 ;
+		u_viscous_fric_rotation = 0.5;
+		}
 
 		//joint space:end wheel rotational velocity (in pi)
 		wheel_rot_vel_end[1] = 9.1*( cos(rot)*vel_end[0] + sin(rot)*vel_end[1] ) + 9.1*( -sin(rot)*vel_end[0] + cos(rot)*vel_end[1] ) + 6 * vel_end[2];
@@ -355,10 +429,18 @@ if (n > 1) {
 
 		P_traj_fric_end = u_static_fric_end[1]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[1]) + u_static_fric_end[2]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[2]) + u_static_fric_end[3]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[3]) + u_static_fric_end[4]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_end[0])*fabs(vel_end[0]) + fabs(vel_end[1])*fabs(vel_end[1]) ) + u_viscous_fric_rotation*m_auckbot*G*fabs(vel_end[2])*fabs(vel_end[2]);
 
-		I_motor_pred_end[1] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[1] + u_static_fric_end[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[1]) )/36.25/4;
-		I_motor_pred_end[2] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[2] + u_static_fric_end[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[2]) )/36.25/4;
-		I_motor_pred_end[3] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[3] + u_static_fric_end[3]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[3]) )/36.25/4;
-		I_motor_pred_end[4] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[4] + u_static_fric_end[4]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[4]) )/36.25/4;
+		I_motor_pred_end[1] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[1] + u_static_fric_end[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[1]) )/36.25;
+		I_motor_pred_end[2] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[2] + u_static_fric_end[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[2]) )/36.25;
+		I_motor_pred_end[3] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[3] + u_static_fric_end[3]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[3]) )/36.25;
+		I_motor_pred_end[4] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[4] + u_static_fric_end[4]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[4]) )/36.25;
+
+		if ( ( (vel_end[0]==0)&&(vel_end[1]==0) )||( (vel_end[1]==0)&&(vel_end[2]==0) )||( (vel_end[0]==0)&&(vel_end[2]==0) ) ) {
+		//primitive motion model requires current term scale down
+		I_motor_pred_end[1] = I_motor_pred_end[1]/4;
+		I_motor_pred_end[2] = I_motor_pred_end[2]/4;
+		I_motor_pred_end[3] = I_motor_pred_end[3]/4;
+		I_motor_pred_end[4] = I_motor_pred_end[4]/4;
+		} 
 
 		P_traj_elec_end = R_armature * I_motor_pred_end[1] * I_motor_pred_end[1] + R_armature * I_motor_pred_end[2] * I_motor_pred_end[2] + R_armature * I_motor_pred_end[3] * I_motor_pred_end[3] + R_armature * I_motor_pred_end[4] * I_motor_pred_end[4];
 
