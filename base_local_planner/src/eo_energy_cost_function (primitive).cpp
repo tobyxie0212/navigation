@@ -134,17 +134,18 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   double self_scale = 0;
 
   //new added double variables for eo_energy_cost_function
-	double wheel_rot_vel [5]; //ignore [0] for easy name assignment
+	//ignore [0] for easy name assignment
+	// _end suffix represents utility in the rest of the route
+	double wheel_rot_vel [5]; 
 	double wheel_rot_vel_end [5];
 	double wheel_vel_p [5]; //wheel velocity in parallel direction
 	double wheel_vel_p_end [5];
-	//double wheel_thrust_p [5]; //wheel thrust force in parrallel direction
 	double u_static_fric [5]; //static friction of each wheel
 	double u_static_fric_end [5];
 	double I_motor_pred [5]; //predicted current of each motor for the planned trajectories
 	double I_motor_pred_end [5];
 	double P_traj_kine, P_traj_fric, P_traj_elec, P_traj_mech, P_traj_idle;
-	double P_traj_fric_end, P_traj_elec_end, P_traj_mech_end;
+	double P_traj_fric_end, P_traj_elec_end, P_traj_mech_end; //kinetic energy is trivial as assuming none acceleration in the rest of the route
 	
 	//params for Auckbot TODO:move it to setParams void
 	double m_auckbot = 94; //94 kg
@@ -248,8 +249,6 @@ if (n > 1) {
 	P_traj_kine = ( fmax(vel_mean[0] * acc_mean[0], 0) + fmax(vel_mean[1] * acc_mean[1], 0) ) * m_auckbot + fmax(vel_mean[2] * acc_mean[2], 0) * I_auckbot;
 
 	//friction dissipation - systain the robot's motion
-	//TODO modified this simple friction model - convert into wheel velcity rather than robot velocity
-	//P_traj_fric = u_viscous_fric * m_auckbot * G * ( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ); //simple version
 	if (vel_mean[1]==0 && vel_mean[2]==0) {
 	wheel_vel_p[1] = vel_mean[0];
 	wheel_vel_p[2] = vel_mean[0];
@@ -288,7 +287,7 @@ if (n > 1) {
 	}
 
 	//friction dissipation
-	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ) + u_viscous_fric_rotation*m_auckbot*G*fabs(vel_mean[2])*fabs(vel_mean[2]);
+	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ) + u_viscous_fric_rotation*fabs(vel_mean[2])*fabs(vel_mean[2]);
 
 	//electric dissipation(scale down the current weight by four)
 	I_motor_pred[1] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[1])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[1] + u_static_fric[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[1]) )/36.25/4;
@@ -353,7 +352,7 @@ if (n > 1) {
 		u_static_fric_end[4] = u_sliding_fric;
 		}
 
-		P_traj_fric_end = u_static_fric_end[1]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[1]) + u_static_fric_end[2]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[2]) + u_static_fric_end[3]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[3]) + u_static_fric_end[4]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_end[0])*fabs(vel_end[0]) + fabs(vel_end[1])*fabs(vel_end[1]) ) + u_viscous_fric_rotation*m_auckbot*G*fabs(vel_end[2])*fabs(vel_end[2]);
+		P_traj_fric_end = u_static_fric_end[1]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[1]) + u_static_fric_end[2]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[2]) + u_static_fric_end[3]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[3]) + u_static_fric_end[4]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[4]) + u_viscous_fric*( fabs(vel_end[0])*fabs(vel_end[0]) + fabs(vel_end[1])*fabs(vel_end[1]) ) + u_viscous_fric_rotation*fabs(vel_end[2])*fabs(vel_end[2]);
 
 		I_motor_pred_end[1] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[1] + u_static_fric_end[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[1]) )/36.25/4;
 		I_motor_pred_end[2] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[2] + u_static_fric_end[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[2]) )/36.25/4;
@@ -374,6 +373,7 @@ if (n > 1) {
 
 	//traj_scale += 0.3;
 	if (traj_scale > 1) traj_scale = 1;
+	//TODO: self_scale used to scale the energy term in the DWA cost functiion
 	self_scale = 0.7;
 
   // ROS_INFO(">>> scoreTrajectory s:%d, l:%.2f, r:%.2f, v:%.3f, a:%.3f, e:%.3f", \
