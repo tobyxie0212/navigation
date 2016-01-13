@@ -152,10 +152,10 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 	double I_auckbot = 25; //moment of inertia of the robot in Z direction
 	
 	//TODO:Wednesday remain the default friction coefficients for primitive motions
-	double u_rolling_fric = 0.15;
+	double u_rolling_fric = 0.18;
 	double u_sliding_fric = 0.9;
-	double u_viscous_fric = 0.5 ;					//viscous friction coefficient for robot translation
-	double u_viscous_fric_rotation = 0.5; //viscous friction coefficient for robot rotation
+	double u_viscous_fric = 0.2 ;					//viscous friction coefficient for robot translation
+	double u_viscous_fric_rotation = 0.6; //viscous friction coefficient for robot rotation
 	double R_armature = 0.81;
 	double M_torque_fric = 0.0195;
 
@@ -244,34 +244,34 @@ if (n > 1) {
 	//distinguish motion type
 	if ( ( (vel_mean[0]==0)&&(vel_mean[1]==0) )||( (vel_mean[1]==0)&&(vel_mean[2]==0) )||( (vel_mean[0]==0)&&(vel_mean[2]==0) ) ) {
 	//primitive motion
-	u_rolling_fric = 0.15;
+	u_rolling_fric = 0.18;
 	u_sliding_fric = 0.9;
-	u_viscous_fric = 0.5 ;
-	u_viscous_fric_rotation = 0.5;
+	u_viscous_fric = 0.2;
+	u_viscous_fric_rotation = 0.6;
 	} else if (vel_mean[0]==0) {
 	//YZ strafing curve
-	u_rolling_fric = 0.15;
-	u_sliding_fric = 0.9;
-	u_viscous_fric = 0.5 ;
-	u_viscous_fric_rotation = 0.5;
+	u_rolling_fric = 0.1;
+	u_sliding_fric = 0.3;
+	u_viscous_fric = 3;
+	u_viscous_fric_rotation = 3;
 	} else if (vel_mean[1]==0) {
 	//XZ forward curve
-	u_rolling_fric = 0.15;
-	u_sliding_fric = 0.9;
-	u_viscous_fric = 0.5 ;
-	u_viscous_fric_rotation = 0.5;
+	u_rolling_fric = 0.1;
+	u_sliding_fric = 0.15;
+	u_viscous_fric = 0.75;
+	u_viscous_fric_rotation = 0.75;
 	} else if (vel_mean[2]==0) {
 	//XY diagonal
-	u_rolling_fric = 0.15;
-	u_sliding_fric = 0.9;
-	u_viscous_fric = 0.5 ;
-	u_viscous_fric_rotation = 0.5;
+	u_rolling_fric = 0.2;
+	u_sliding_fric = 0.25;
+	u_viscous_fric = 1;
+	u_viscous_fric_rotation = 0;
 	} else {
 	//XYZ diagonal curve
-	u_rolling_fric = 0.15;
-	u_sliding_fric = 0.9;
-	u_viscous_fric = 0.5 ;
-	u_viscous_fric_rotation = 0.5;
+	u_rolling_fric = 0.1;
+	u_sliding_fric = 0.3;
+	u_viscous_fric = 1.5;
+	u_viscous_fric_rotation = 1.5;
 	}
 
 	//joint space: wheel rotational velocity (in pi) (PhD/second year/ros 2d navigation stack/kinematics_matrix_variables)
@@ -323,7 +323,7 @@ if (n > 1) {
 	}
 
 	//friction dissipation
-	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ) + u_viscous_fric_rotation*fabs(vel_mean[2])*fabs(vel_mean[2]);
+	P_traj_fric = u_static_fric[1]*0.25*m_auckbot*G*fabs(wheel_vel_p[1]) + u_static_fric[2]*0.25*m_auckbot*G*fabs(wheel_vel_p[2]) + u_static_fric[3]*0.25*m_auckbot*G*fabs(wheel_vel_p[3]) + u_static_fric[4]*0.25*m_auckbot*G*fabs(wheel_vel_p[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_mean[0])*fabs(vel_mean[0]) + fabs(vel_mean[1])*fabs(vel_mean[1]) ) + u_viscous_fric_rotation*m_auckbot*G*fabs(vel_mean[2])*fabs(vel_mean[2]);
 
 	//electric dissipation
 	I_motor_pred[1] = ( ( cos(rot)-sin(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[0] + ( sin(rot)+cos(rot))*0.3535*copysign(1.0,wheel_rot_vel[1])*m_auckbot*acc_mean[1] + 0.54*copysign(1.0,wheel_rot_vel[1])*I_auckbot*acc_mean[2] +u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p[1] + u_static_fric[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p[1]) )/36.25;
@@ -356,34 +356,34 @@ if (n > 1) {
 		//distinguish motion type
 		if ( ( (vel_end[0]==0)&&(vel_end[1]==0) )||( (vel_end[1]==0)&&(vel_end[2]==0) )||( (vel_end[0]==0)&&(vel_end[2]==0) ) ) {
 		//primitive motion
-		u_rolling_fric = 0.15;
+		u_rolling_fric = 0.18;
 		u_sliding_fric = 0.9;
-		u_viscous_fric = 0.5 ;
-		u_viscous_fric_rotation = 0.5;
+		u_viscous_fric = 0.2;
+		u_viscous_fric_rotation = 0.6;
 		} else if (vel_end[0]==0) {
 		//YZ strafing curve
-		u_rolling_fric = 0.15;
-		u_sliding_fric = 0.9;
-		u_viscous_fric = 0.5 ;
-		u_viscous_fric_rotation = 0.5;
+		u_rolling_fric = 0.1;
+		u_sliding_fric = 0.3;
+		u_viscous_fric = 3;
+		u_viscous_fric_rotation = 3;
 		} else if (vel_end[1]==0) {
 		//XZ forward curve
-		u_rolling_fric = 0.15;
-		u_sliding_fric = 0.9;
-		u_viscous_fric = 0.5 ;
-		u_viscous_fric_rotation = 0.5;
+		u_rolling_fric = 0.1;
+		u_sliding_fric = 0.15;
+		u_viscous_fric = 0.75;
+		u_viscous_fric_rotation = 0.75;
 		} else if (vel_end[2]==0) {
 		//XY diagonal
-		u_rolling_fric = 0.15;
-		u_sliding_fric = 0.9;
-		u_viscous_fric = 0.5 ;
-		u_viscous_fric_rotation = 0.5;
+		u_rolling_fric = 0.2;
+		u_sliding_fric = 0.25;
+		u_viscous_fric = 1;
+		u_viscous_fric_rotation = 0;
 		} else {
 		//XYZ diagonal curve
-		u_rolling_fric = 0.15;
-		u_sliding_fric = 0.9;
-		u_viscous_fric = 0.5 ;
-		u_viscous_fric_rotation = 0.5;
+		u_rolling_fric = 0.1;
+		u_sliding_fric = 0.3;
+		u_viscous_fric = 1.5;
+		u_viscous_fric_rotation = 1.5;
 		}
 
 		//joint space:end wheel rotational velocity (in pi)
@@ -428,7 +428,7 @@ if (n > 1) {
 		u_static_fric_end[4] = u_sliding_fric;
 		}
 
-		P_traj_fric_end = u_static_fric_end[1]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[1]) + u_static_fric_end[2]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[2]) + u_static_fric_end[3]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[3]) + u_static_fric_end[4]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[4]) + u_viscous_fric*( fabs(vel_end[0])*fabs(vel_end[0]) + fabs(vel_end[1])*fabs(vel_end[1]) ) + u_viscous_fric_rotation*fabs(vel_end[2])*fabs(vel_end[2]);
+		P_traj_fric_end = u_static_fric_end[1]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[1]) + u_static_fric_end[2]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[2]) + u_static_fric_end[3]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[3]) + u_static_fric_end[4]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_end[0])*fabs(vel_end[0]) + fabs(vel_end[1])*fabs(vel_end[1]) ) + u_viscous_fric_rotation*m_auckbot*G*fabs(vel_end[2])*fabs(vel_end[2]);
 
 		I_motor_pred_end[1] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[1] + u_static_fric_end[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[1]) )/36.25;
 		I_motor_pred_end[2] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[2] + u_static_fric_end[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[2]) )/36.25;

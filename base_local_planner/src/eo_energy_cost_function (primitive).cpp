@@ -150,10 +150,10 @@ double EOEnergyCostFunction::scoreTrajectory(Trajectory &traj) {
 	//params for Auckbot TODO:move it to setParams void
 	double m_auckbot = 94; //94 kg
 	double I_auckbot = 25; //moment of inertia of the robot in Z direction
-	double u_rolling_fric = 0.15;
+	double u_rolling_fric = 0.18;
 	double u_sliding_fric = 0.9;
-	double u_viscous_fric = 0.5 ;					//viscous friction coefficient for robot translation
-	double u_viscous_fric_rotation = 0.5; //viscous friction coefficient for robot rotation
+	double u_viscous_fric = 0.2;					//viscous friction coefficient for robot translation
+	double u_viscous_fric_rotation = 0.6; //viscous friction coefficient for robot rotation
 	double R_armature = 0.81;
 	double M_torque_fric = 0.0195;
 
@@ -352,7 +352,7 @@ if (n > 1) {
 		u_static_fric_end[4] = u_sliding_fric;
 		}
 
-		P_traj_fric_end = u_static_fric_end[1]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[1]) + u_static_fric_end[2]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[2]) + u_static_fric_end[3]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[3]) + u_static_fric_end[4]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[4]) + u_viscous_fric*( fabs(vel_end[0])*fabs(vel_end[0]) + fabs(vel_end[1])*fabs(vel_end[1]) ) + u_viscous_fric_rotation*fabs(vel_end[2])*fabs(vel_end[2]);
+		P_traj_fric_end = u_static_fric_end[1]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[1]) + u_static_fric_end[2]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[2]) + u_static_fric_end[3]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[3]) + u_static_fric_end[4]*0.25*m_auckbot*G*fabs(wheel_vel_p_end[4]) + u_viscous_fric*m_auckbot*G*( fabs(vel_end[0])*fabs(vel_end[0]) + fabs(vel_end[1])*fabs(vel_end[1]) ) + u_viscous_fric_rotation*m_auckbot*G*fabs(vel_end[2])*fabs(vel_end[2]);
 
 		I_motor_pred_end[1] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[1] + u_static_fric_end[1]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[1]) )/36.25/4;
 		I_motor_pred_end[2] = ( u_viscous_fric*0.25*m_auckbot*G*wheel_vel_p_end[2] + u_static_fric_end[2]*0.25*m_auckbot*G*copysign(1.0,wheel_vel_p_end[2]) )/36.25/4;
