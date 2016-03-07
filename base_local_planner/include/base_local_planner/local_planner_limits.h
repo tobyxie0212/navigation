@@ -64,6 +64,10 @@ public:
   double trans_stopped_vel;
   double rot_stopped_vel;
   bool   restore_defaults;
+	//latch flag
+	bool latch_xy_goal_tolerance;
+	//energy term
+	double energy_scale;
 
   LocalPlannerLimits() {}
 
@@ -86,7 +90,11 @@ public:
 //      double njerk_lim_rot = -1,
       bool   nprune_plan = true,
       double ntrans_stopped_vel = 0.1,
-      double nrot_stopped_vel = 0.1):
+      double nrot_stopped_vel = 0.1,
+//latch flag
+bool nlatch_xy_goal_tolerance = false,
+//energy term
+double nenergy_scale = 1):
         max_trans_vel(nmax_trans_vel),
         min_trans_vel(nmin_trans_vel),
         max_vel_x(nmax_vel_x),
@@ -99,6 +107,10 @@ public:
         acc_lim_y(nacc_lim_y),
         acc_lim_theta(nacc_lim_theta),
         acc_limit_trans(nacc_limit_trans),
+				//latch flag
+				latch_xy_goal_tolerance(nlatch_xy_goal_tolerance),
+				//energy term
+				energy_scale(nenergy_scale),
 //        jerk_lim_trans(njerk_lim_trans),
 //        jerk_lim_rot(njerk_lim_rot),
         prune_plan(nprune_plan),
