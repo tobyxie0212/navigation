@@ -356,34 +356,34 @@ if (n > 1) {
 		//distinguish motion type
 		if ( ( (vel_end[0]==0)&&(vel_end[1]==0) )||( (vel_end[1]==0)&&(vel_end[2]==0) )||( (vel_end[0]==0)&&(vel_end[2]==0) ) ) {
 		//primitive motion
-		u_rolling_fric = 0.18;
-		u_sliding_fric = 0.9;
-		u_viscous_fric = 0.2;
-		u_viscous_fric_rotation = 0.6;
+		u_rolling_fric = 0.08;
+		u_sliding_fric = 0.2;
+		u_viscous_fric = 0.65;
+		u_viscous_fric_rotation = 1;
 		} else if (vel_end[0]==0) {
 		//YZ strafing curve
 		u_rolling_fric = 0.1;
-		u_sliding_fric = 0.3;
-		u_viscous_fric = 3;
+		u_sliding_fric = 0.14;
+		u_viscous_fric = 2.6;
 		u_viscous_fric_rotation = 3;
 		} else if (vel_end[1]==0) {
 		//XZ forward curve
-		u_rolling_fric = 0.1;
-		u_sliding_fric = 0.15;
-		u_viscous_fric = 0.75;
-		u_viscous_fric_rotation = 0.75;
+		u_rolling_fric = 0.01;
+		u_sliding_fric = 0.1;
+		u_viscous_fric = 0.9;
+		u_viscous_fric_rotation = 1.8;
 		} else if (vel_end[2]==0) {
 		//XY diagonal
-		u_rolling_fric = 0.2;
-		u_sliding_fric = 0.25;
+		u_rolling_fric = 0.1;
+		u_sliding_fric = 0.2;
 		u_viscous_fric = 1;
 		u_viscous_fric_rotation = 0;
 		} else {
 		//XYZ diagonal curve
 		u_rolling_fric = 0.1;
-		u_sliding_fric = 0.3;
-		u_viscous_fric = 1.5;
-		u_viscous_fric_rotation = 1.5;
+		u_sliding_fric = 0.25;
+		u_viscous_fric = 1;
+		u_viscous_fric_rotation = 0.8;
 		}
 
 		//joint space:end wheel rotational velocity (in pi)
