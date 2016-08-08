@@ -58,6 +58,7 @@ void poseToXYTh(geometry_msgs::PoseStamped pose, float coordsarr[]){
   coordsarr[0] = pose.pose.position.x;
   coordsarr[1] = pose.pose.position.y;
   coordsarr[2] = tf::getYaw(pose.pose.orientation);
+	ROS_INFO("Test: %f", coordsarr[0]);
 }
 
 void calcl(geometry_msgs::PoseStamped p) {
@@ -197,6 +198,8 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
     n * t /                           //  * duration (n:size of each delta traj, t:time of each delta traj
     hypot(traj_length, rot);          //  / distance
 
+
+	ROS_INFO("    traj_length: %5.2f, route_length: %5.2f", traj_length, route_length);
   // ROUTE COST
   if (route_length > traj_length) {
     t_route = route_length - traj_length / hypot(vel_end[0], vel_end[1]);
@@ -225,8 +228,8 @@ double EnergyCostFunction::scoreTrajectory(Trajectory &traj) {
   cost = E_traj * traj_scale + E_route * (1-traj_scale) ;
 	cost *= self_scale;
 
-	ROS_INFO(">>> traj_scale: %4.2f, cost: %3.1f", traj_scale, cost);
-	ROS_INFO("    traj_length: %5.2f, route_length: %5.2f", traj_length, route_length);
+	//ROS_INFO(">>> traj_scale: %4.2f, cost: %3.1f", traj_scale, cost);
+	//ROS_INFO("    traj_length: %5.2f, route_length: %5.2f", traj_length, route_length);
   return cost;
 }
 
@@ -251,7 +254,7 @@ void EnergyCostFunction::setRoute(std::vector<geometry_msgs::PoseStamped> global
   iter = 0;
   route_length = 0;
   for_each (route_.begin(), route_.end(), calcl);
-  // ROS_INFO("Length: %f", route_length);
+  //ROS_INFO("Length: %f", route_length);
 }
 
 } /* namespace base_local_planner */
