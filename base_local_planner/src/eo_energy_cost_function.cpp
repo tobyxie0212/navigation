@@ -218,6 +218,8 @@ if (n > 1) {
   // end 
   for (int j = 0; j < DOF; j++) {
     vel_end[j] += vel[j][i-1]; // (WE STILL USE THE i !!)
+		//we don't care rotational velocity in vel_end
+		vel_end[2] = 0;
   }
 
   for (int j = 0; j < DOF; j++) {
@@ -241,7 +243,8 @@ if (n > 1) {
 
 	vel_end[0] = traj.xv_;
 	vel_end[1] = traj.yv_;
-	vel_end[2] = traj.thetav_;
+	//vel_end[2] = traj.thetav_;
+	vel_end[2] = 0;
 }
  
   // TRAJECTORY COST   
@@ -454,7 +457,8 @@ if (n > 1) {
 		
     E_route = (P_traj_fric_end + P_traj_elec_end + P_traj_mech_end + P_traj_idle)*t_route;
 
-    traj_scale = traj_length / eo_route_length;       
+    //traj_scale = traj_length / eo_route_length; 
+		traj_scale = 0.5;      
   } else { // trajectory leads already to goal
     E_route = 0;
     traj_scale = 1; 
@@ -462,21 +466,23 @@ if (n > 1) {
 
 	//traj_scale += 0.3;
 	if (traj_scale > 1) traj_scale = 1;
-	//TODO: self_scale used to scale the energy term in the DWA cost functiion
-	self_scale = 0.1;
 
   // ROS_INFO(">>> scoreTrajectory s:%d, l:%.2f, r:%.2f, v:%.3f, a:%.3f, e:%.3f", \
   //   traj.getPointsSize(), traj_length, rot, vel[0][0], acc[0][0], E_traj);
   // ROS_INFO("-- lengths: %.1f // %.1f", traj_length, route_length);
   // ROS_INFO("HYPO TEST (all shoud be positive) %.1f, %.1f, %.1f", hypot(-3.0, -4.0), hypot(3.0, -4.0), hypot(-3.0, 4.0));
 
-  //cost = E_traj * traj_scale + E_route * (1-traj_scale) ;
-	cost = E_traj;
+  cost = E_traj * traj_scale + E_route * (1-traj_scale) ;
+	//cost = E_traj;
+
+	//TODO: self_scale used to scale the energy term in the DWA cost functiion
+	self_scale = 0.1;
 
 	cost *= self_scale;
 
 	//ROS_INFO(">>> traj_scale: %4.2f, cost: %3.1f", traj_scale, cost);
 	ROS_INFO("traj_length: %5.2f, eo_route_length: %5.2f", traj_length, eo_route_length);
+	ROS_INFO("E_traj: %5.2f, E_route: %5.2f", E_traj, E_route);
 	//	
 	//ROS_INFO("A: %f", eo_ocoord[0]);
 	//ROS_INFO("C: %f", eo_ocoord[1]);
